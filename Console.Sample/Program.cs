@@ -1,26 +1,40 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Xml.Linq;
+using Autofac;
 using NuGet;
 using NuPlug;
 
 namespace ConsoleSample
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
-            // cf.: https://github.com/mkoertgen/hello.nuget.server
-            var packageSource = "http://localhost:8888/nuget/feed"; //"https://packages.nuget.org/api/v2";
-            var feedRepo = PackageRepositoryFactory.Default.CreateRepository(packageSource);
+            // ReSharper disable once ConvertToConstant.Local
+            //var packageSource = "https://packages.nuget.org/api/v2";
+            var packageSource = "http://localhost:8888/nuget/feed"; // cf.: https://github.com/mkoertgen/hello.nuget.server
+            var feed = PackageRepositoryFactory.Default.CreateRepository(packageSource);
 
-            var packageManager = new PackageManager(feedRepo, "plugins");
-            var plugins = new PlugIns(packageManager);
+            var packageManager = new PackageManager(feed, "plugins");
 
-            plugins.Composed += (s, e) => Console.WriteLine("plugin action");
+            var packagesConfig = new XDocument(
+                new XElement("packages",
+                    new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"))
+                ));
 
-            packageManager.InstallPackage("NUnit");
+            packageManager.InstallPackages(packagesConfig);
 
+            var modulePlugins = new PackageContainer<Module>(packageManager);
 
-            packageManager.UninstallPackage("NUnit");
+            Configure(modulePlugins.Items);
+        }
+
+        private static void Configure(IEnumerable<Module> modules)
+        {
+            var builder = new ContainerBuilder();
+
+            foreach (var module in modules)
+                builder.RegisterModule(module);
         }
     }
 }

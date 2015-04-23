@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{96D30860-1BBB-4BB2-94BB-CB8B1DE54A72}</ProjectGuid>
+    <ProjectGuid>{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuPlug</RootNamespace>
-    <AssemblyName>NuPlug</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>SamplePlugin</RootNamespace>
+    <AssemblyName>SamplePlugin</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -30,34 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Web.XmlTransform">
-      <HintPath>..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Core, Version=2.8.60318.667, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NuGet.Core.2.8.5\lib\net40-Client\NuGet.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Frameworks">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-pre-20150220044603\lib\net45\NuGet.Frameworks.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Packaging">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-pre-20150220044603\lib\net45\NuGet.Packaging.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.PackagingCore">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-pre-20150220044603\lib\net45\NuGet.PackagingCore.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Resolver">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-pre-20150220044603\lib\net45\NuGet.Resolver.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Versioning">
-      <HintPath>..\packages\NuGet.Versioning.1.0.7\lib\portable-net40+win\NuGet.Versioning.dll</HintPath>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs">
@@ -66,8 +49,7 @@
     <Compile Include="..\VersionInfo.g.cs">
       <Link>Properties\VersionInfo.g.cs</Link>
     </Compile>
-    <Compile Include="PackageContainer.cs" />
-    <Compile Include="PackageManagerExtensions.cs" />
+    <Compile Include="MyPluginModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

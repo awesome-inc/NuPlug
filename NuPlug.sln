@@ -7,6 +7,30 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "Console.Sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuPlug", "NuPlug\NuPlug.csproj", "{96D30860-1BBB-4BB2-94BB-CB8B1DE54A72}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplePlugin", "SamplePlugin\SamplePlugin.csproj", "{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{52AEA1B8-C969-4E6B-971D-1CCE6F2DCDC9}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{DB80D9DE-606D-4D45-86BF-FF507783BC81}"
+	ProjectSection(SolutionItems) = preProject
+		build.bat = build.bat
+		Build.proj = Build.proj
+		.build\build.targets = .build\build.targets
+		.build\empty.targets = .build\empty.targets
+		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
+		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B8076B1-3838-4671-86D0-0CC3675B0C10}"
+	ProjectSection(SolutionItems) = preProject
+		solution.targets = solution.targets
+		SolutionInfo.cs = SolutionInfo.cs
+		VersionInfo.g.cs = VersionInfo.g.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +45,10 @@ Global
 		{96D30860-1BBB-4BB2-94BB-CB8B1DE54A72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96D30860-1BBB-4BB2-94BB-CB8B1DE54A72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96D30860-1BBB-4BB2-94BB-CB8B1DE54A72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
