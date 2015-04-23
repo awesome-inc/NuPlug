@@ -19,7 +19,6 @@
     </frameworkAssemblies>
     <dependencies>
       <dependency id="NuGet.Core" version="2.8.5" />
-      <dependency id="NuGet.Packaging" version="1.0.0-pre-20150220044603" />
     </dependencies>
   </metadata>
   <files>

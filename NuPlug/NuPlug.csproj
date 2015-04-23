@@ -37,21 +37,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NuGet.Core.2.8.5\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="NuGet.Frameworks">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-pre-20150220044603\lib\net45\NuGet.Frameworks.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Packaging">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-pre-20150220044603\lib\net45\NuGet.Packaging.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.PackagingCore">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-pre-20150220044603\lib\net45\NuGet.PackagingCore.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Resolver">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-pre-20150220044603\lib\net45\NuGet.Resolver.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Versioning">
-      <HintPath>..\packages\NuGet.Versioning.1.0.7\lib\portable-net40+win\NuGet.Versioning.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />

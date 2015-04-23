@@ -1,23 +1,19 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
 using NuGet;
-using NuGet.Packaging;
 
 namespace NuPlug
 {
     public static class PackageManagerExtensions
     {
         public static void InstallPackages(this IPackageManager packageManager, XDocument xml, 
-            bool ignoreDependencies = false, bool allowPrerelease = true)
+            bool ignoreDependencies = true, bool allowPrerelease = false)
         {
-            var packageIds = new PackagesConfigReader(xml)
-                .GetPackages()
-                .Select(p => p.PackageIdentity)
+            var packageIds = xml.Element("packages").Elements("package")
+                .Select(x => new PackageName(x.Attribute("id").Value, SemanticVersion.Parse(x.Attribute("version").Value)))
                 .ToList();
 
-            packageIds.ForEach(p => packageManager.InstallPackage(p.Id, 
-                new SemanticVersion(p.Version.ToNormalizedString()), 
-                ignoreDependencies, allowPrerelease));
+            packageIds.ForEach(p => packageManager.InstallPackage(p.Id, p.Version, ignoreDependencies, allowPrerelease));
         }
     }
 }
