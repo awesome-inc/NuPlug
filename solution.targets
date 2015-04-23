@@ -3,7 +3,7 @@
 
 	<PropertyGroup>
 		<!-- TODO: Adjust version -->
-		<PackageVersion>1.0.0.$(Build)</PackageVersion>
+		<PackageVersion>0.1.0.$(Build)</PackageVersion>
 	</PropertyGroup>
 
 	<!-- ## Uncomment to customize targets to customize test ##
