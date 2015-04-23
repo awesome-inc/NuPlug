@@ -19,7 +19,7 @@ namespace ConsoleSample
 
             var packagesConfig = new XDocument(
                 new XElement("packages",
-                    new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"))
+                    new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", "1.0.0.0"))
                 ));
 
             packageManager.InstallPackages(packagesConfig);
@@ -35,6 +35,8 @@ namespace ConsoleSample
 
             foreach (var module in modules)
                 builder.RegisterModule(module);
+
+            var container = builder.Build();
         }
     }
 }

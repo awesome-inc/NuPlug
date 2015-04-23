@@ -8,7 +8,7 @@ namespace NuPlug
     public static class PackageManagerExtensions
     {
         public static void InstallPackages(this IPackageManager packageManager, XDocument xml, 
-            bool ignoreDependencies = true, bool allowPrerelease = false)
+            bool ignoreDependencies = false, bool allowPrerelease = true)
         {
             var packageIds = new PackagesConfigReader(xml)
                 .GetPackages()
