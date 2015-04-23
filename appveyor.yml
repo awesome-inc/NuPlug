@@ -1,6 +1,13 @@
 version: 0.1.0.{build}
+environment:
+  apiKey:
+    secure: lrwREUV4nO99AU0A6xVx/MNF0BaJc8A1B8dwEGMLqmYKGqD5E7PJ/IC9RHcle6pk
 nuget:
   disable_publish_on_pr: true
 build_script:
 - build NuPlug\NuPlug.csproj /t:Build /v:m
+before_deploy:
+- nuget setapikey %apiKey%  
+deploy_script:
+- build NuPlug\NuPlug.csproj /t:Deploy /v:m
 test: off
