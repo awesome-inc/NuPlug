@@ -1,5 +1,7 @@
 # NuPlug
 
+[![Build status](https://ci.appveyor.com/api/projects/status/247pcwhcvr4177at/branch/master?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug/branch/master)
+
 Plugin management powered by NuGet.
 
 ## What is it?
