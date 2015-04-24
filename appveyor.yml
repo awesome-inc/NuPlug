@@ -5,9 +5,13 @@ environment:
 nuget:
   disable_publish_on_pr: true
 build_script:
-- build NuPlug\NuPlug.csproj /t:Build /v:m
+- build.bat NuPlug.sln /t:CoverageReport /v:m
+after_build:
+- ps: >-
+    $wc = New-Object 'System.Net.WebClient'
+    $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\NuPlug.Tests.xml))
 before_deploy:
 - nuget setapikey %apiKey% -Verbosity quiet
 deploy_script:
-- build NuPlug\NuPlug.csproj /t:Deploy /v:m
+- build.bat NuPlug.sln /t:Deploy /v:m
 test: off
