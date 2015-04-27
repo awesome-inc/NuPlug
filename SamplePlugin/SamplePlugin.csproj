@@ -55,9 +55,11 @@
   <ItemGroup>
     <None Include="Package.nuspec" />
     <None Include="packages.config" />
+    <None Include="SamplePlugin.targets" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.build\build.targets" />
+  <Import Project="SamplePlugin.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
