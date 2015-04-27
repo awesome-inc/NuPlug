@@ -51,6 +51,7 @@
     <Compile Include="..\VersionInfo.g.cs">
       <Link>Properties\VersionInfo.g.cs</Link>
     </Compile>
+    <Compile Include="IPackageContainer.cs" />
     <Compile Include="PackageContainer.cs" />
     <Compile Include="PackageManagerExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

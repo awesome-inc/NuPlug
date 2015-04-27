@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -11,7 +12,7 @@ namespace NuPlug
 {
     public class PackageContainer<TItem>
         // TPlugin should be interfaces only, cf.: http://stackoverflow.com/questions/1096568/how-can-i-use-interface-as-a-c-sharp-generic-type-constraint
-        where TItem : class 
+        : IPackageContainer<TItem> where TItem : class 
     {
         private readonly IPackageManager _packageManager;
         private readonly AggregateCatalog _catalog;
@@ -22,14 +23,16 @@ namespace NuPlug
         public event EventHandler Composed = (s,e) => {};
 
         [ImportMany(AllowRecomposition = true)]
-        public readonly ObservableCollection<TItem> Items = new ObservableCollection<TItem>();
+        public IEnumerable<TItem> Items { get; private set; }
 
         public PackageContainer(IPackageManager packageManager)
         {
-
             if (packageManager == null) throw new ArgumentNullException("packageManager");
             _packageManager = packageManager;
             _catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetEntryAssembly()));
+
+            Items = new ObservableCollection<TItem>();
+
             _container = new CompositionContainer(_catalog);
 
             foreach (var package in _packageManager.LocalRepository.GetPackages())
