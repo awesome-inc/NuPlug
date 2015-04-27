@@ -13,12 +13,12 @@
   before_build:
   - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
-  - build.bat NuPlug.sln /t:CoverageReport;Deploy /v:m
-  after_build:
-  - ps: >-
-      $wc = New-Object 'System.Net.WebClient'
-    
-      $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\NuPlug.Tests.xml))
+  - build.bat NuPlug.sln /t:Deploy /v:m
+#  after_build:
+#  - ps: >-
+#      $wc = New-Object 'System.Net.WebClient'
+#    
+#      $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\NuPlug.Tests.xml))
 
 # all other branches
 -
@@ -27,9 +27,9 @@
   nuget:
     disable_publish_on_pr: true
   build_script:
-  - build.bat NuPlug.sln /t:CoverageReport /v:m
-  after_build:
-  - ps: >-
-      $wc = New-Object 'System.Net.WebClient'
-    
-      $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\NuPlug.Tests.xml))
+  - build.bat NuPlug.sln /t:Package /v:m
+ # after_build:
+ # - ps: >-
+ #     $wc = New-Object 'System.Net.WebClient'
+ #   
+ #     $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\NuPlug.Tests.xml))
