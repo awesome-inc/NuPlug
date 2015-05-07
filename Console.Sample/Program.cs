@@ -24,7 +24,7 @@ namespace ConsoleSample
 
             packageManager.InstallPackages(packagesConfig);
 
-            var modulePlugins = new PackageContainer<Module>(packageManager);
+            var modulePlugins = new NugetPackageContainer<Module>(packageManager);
 
             Configure(modulePlugins.Items);
         }
