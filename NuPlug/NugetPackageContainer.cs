@@ -10,7 +10,7 @@ using NuGet;
 
 namespace NuPlug
 {
-    public class PackageContainer<TItem>
+    public class NugetPackageContainer<TItem>
         // TPlugin should be interfaces only, cf.: http://stackoverflow.com/questions/1096568/how-can-i-use-interface-as-a-c-sharp-generic-type-constraint
         : IPackageContainer<TItem> where TItem : class 
     {
@@ -25,7 +25,7 @@ namespace NuPlug
         [ImportMany(AllowRecomposition = true)]
         public IEnumerable<TItem> Items { get; private set; }
 
-        public PackageContainer(IPackageManager packageManager)
+        public NugetPackageContainer(IPackageManager packageManager)
         {
             if (packageManager == null) throw new ArgumentNullException("packageManager");
             _packageManager = packageManager;
