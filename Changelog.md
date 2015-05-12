@@ -6,4 +6,7 @@
 ## 0.1.1
 * NuGetPackageContainer using a package manager to install nuget feed packages
 * AppVeyor and OneClickBuild configuration
-* Sampels added
+* Samples added
+
+## 0.1.2
+* Fixed selecting target framework specific lib folders

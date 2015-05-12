@@ -2,7 +2,16 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup>
-		<PackageVersion>0.1.2.$(Build)</PackageVersion>
+		<PackageVersion>0.1.3.$(Build)</PackageVersion>
 	</PropertyGroup>
 
+  <ItemGroup>
+     <Compile Include="$(SolutionDir)SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="$(SolutionDir)VersionInfo.g.cs">
+      <Link>Properties\VersionInfo.g.cs</Link>
+    </Compile>
+  </ItemGroup>
+  
 </Project>

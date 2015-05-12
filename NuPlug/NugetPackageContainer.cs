@@ -1,45 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Runtime.Versioning;
 using NuGet;
 
 namespace NuPlug
 {
-    public class NugetPackageContainer<TItem>
-        // TPlugin should be interfaces only, cf.: http://stackoverflow.com/questions/1096568/how-can-i-use-interface-as-a-c-sharp-generic-type-constraint
-        : IPackageContainer<TItem> where TItem : class 
+    public class NugetPackageContainer<TItem> 
+        : PackageContainer<TItem> where TItem : class 
     {
         private readonly IPackageManager _packageManager;
-        private readonly AggregateCatalog _catalog;
 
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-        private readonly CompositionContainer _container;
+        private readonly FrameworkName _framework = VersionHelper.GetTargetFramework();
 
-        public event EventHandler Composed = (s,e) => {};
-
-        [ImportMany(AllowRecomposition = true)]
-        public IEnumerable<TItem> Items { get; private set; }
-
-        public NugetPackageContainer(IPackageManager packageManager)
+        public NugetPackageContainer(IPackageManager packageManager) 
         {
-            if (packageManager == null) throw new ArgumentNullException("packageManager");
+            if (packageManager == null) throw new ArgumentNullException(nameof(packageManager));
             _packageManager = packageManager;
-            _catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetEntryAssembly()));
-
-            Items = new ObservableCollection<TItem>();
-
-            _container = new CompositionContainer(_catalog);
 
             foreach (var package in _packageManager.LocalRepository.GetPackages())
                 AddDirectoryCatalog(package);
-
-            _container.ComposeParts(this);
-            OnComposed();
 
             _packageManager.PackageInstalled += OnPackageInstalled;
             _packageManager.PackageUninstalled += OnPackageUninstalled;
@@ -48,34 +29,32 @@ namespace NuPlug
         private void OnPackageInstalled(object sender, PackageOperationEventArgs e)
         {
             AddDirectoryCatalog(e.Package);
-            OnComposed();
         }
 
         private void OnPackageUninstalled(object sender, PackageOperationEventArgs e)
         {
-            var libDir = Path.Combine(e.InstallPath, "lib");
-            foreach (var catalog in _catalog.Catalogs.OfType<DirectoryCatalog>()
-                .Where(c => PathsMatch(c.FullPath, libDir)))
-                _catalog.Catalogs.Remove(catalog);
-
-            OnComposed();
+            var libDir = Path.Combine(e.InstallPath, Constants.LibDirectory);
+            RemoveDirectory(libDir);
         }
 
         private void AddDirectoryCatalog(IPackage package)
         {
-            var libDir = Path.Combine(_packageManager.PathResolver.GetInstallPath(package), "lib");
-            if (Directory.Exists(libDir)) 
-                _catalog.Catalogs.Add(new DirectoryCatalog(libDir));
-        }
+            var libDir = Path.Combine(_packageManager.PathResolver.GetInstallPath(package), Constants.LibDirectory);
+            var dirInfo = new DirectoryInfo(libDir);
+            if (!dirInfo.Exists) return;
 
-        private void OnComposed() { Composed(this, EventArgs.Empty); }
-
-        private static bool PathsMatch(string path1, string path2)
-        {
-            return String.Equals(
-                path1.TrimEnd(Path.DirectorySeparatorChar), 
-                path2.TrimEnd(Path.DirectorySeparatorChar), 
-                StringComparison.OrdinalIgnoreCase);
+            if (dirInfo.GetFiles("*.dll", SearchOption.TopDirectoryOnly).Any())
+            {
+                AddDirectory(dirInfo.FullName);
+            }
+            else
+            {
+                var folderNames = dirInfo.GetDirectories().Select(d => d.Name);
+                var bestMatch = _framework.Version.BestMatch(folderNames);
+                if (string.IsNullOrWhiteSpace(bestMatch)) return;
+                libDir = Path.Combine(dirInfo.FullName, bestMatch);
+                AddDirectory(libDir);
+            }
         }
     }
 }
