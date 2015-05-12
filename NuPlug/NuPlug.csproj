@@ -68,7 +68,7 @@
   <ItemGroup>
     <Compile Include="IPackageContainer.cs" />
     <Compile Include="PackageContainer.cs" />
-    <Compile Include="MefPackageContainer_Should.cs" />
+    <Compile Include="PackageContainer_Should.cs" />
     <Compile Include="NugetPackageContainer.cs" />
     <Compile Include="PackageManagerExtensions.cs" />
     <Compile Include="PackageManagerExtensions_Should.cs" />

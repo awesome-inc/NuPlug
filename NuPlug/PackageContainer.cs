@@ -9,7 +9,7 @@ using NEdifis.Attributes;
 
 namespace NuPlug
 {
-    [TestedBy(typeof(MefPackageContainer_Should))]
+    [TestedBy(typeof(PackageContainer_Should))]
     public class PackageContainer<TItem>
         : IPackageContainer<TItem>
         , IDisposable

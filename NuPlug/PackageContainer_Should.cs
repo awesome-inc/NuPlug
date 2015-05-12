@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using FluentAssertions;
 using NEdifis.Attributes;
@@ -12,7 +10,7 @@ namespace NuPlug
 {
     [TestFixtureFor(typeof(PackageContainer<>))]
     // ReSharper disable InconsistentNaming
-    class MefPackageContainer_Should
+    class PackageContainer_Should
     {
         [Test]
         public void Compose_on_Update()
