@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Linq;
 using Autofac;
+using Autofac.Core;
 using NuGet;
 using NuPlug;
 
@@ -19,18 +20,18 @@ namespace ConsoleSample
 
             var packagesConfig = new XDocument(
                 new XElement("packages",
-                    new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", "1.0.0.0"))
+                    new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", "0.1.4.0"))
                 ));
 
             packageManager.InstallPackages(packagesConfig);
 
-            var modulePlugins = new NugetPackageContainer<Module>(packageManager);
+            var modulePlugins = new NugetPackageContainer<IModule>(packageManager);
             modulePlugins.Update();
 
             Configure(modulePlugins.Items);
         }
 
-        private static void Configure(IEnumerable<Module> modules)
+        private static void Configure(IEnumerable<IModule> modules)
         {
             var builder = new ContainerBuilder();
 

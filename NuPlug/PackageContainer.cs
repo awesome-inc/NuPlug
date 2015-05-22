@@ -5,11 +5,12 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
-using NEdifis.Attributes;
 
 namespace NuPlug
 {
-    [TestedBy(typeof(PackageContainer_Should))]
+#if DEBUG
+    [NEdifis.Attributes.TestedBy(typeof(PackageContainer_Should))]
+#endif
     public class PackageContainer<TItem>
         : IPackageContainer<TItem>
         , IDisposable

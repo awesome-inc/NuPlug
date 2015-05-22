@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using NEdifis.Attributes;
 using NuGet;
 
 namespace NuPlug
 {
-    [TestedBy(typeof(PackageManagerExtensions_Should))]
+#if DEBUG
+    [NEdifis.Attributes.TestedBy(typeof(PackageManagerExtensions_Should))]
+#endif
     public static class PackageManagerExtensions
     {
         public static void InstallPackages(this IPackageManager packageManager, XDocument xml,

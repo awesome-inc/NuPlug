@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "Console.Sample\ConsoleSample.csproj", "{B2F69885-9170-4268-838D-F1CA2880106D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "ConsoleSample\ConsoleSample.csproj", "{B2F69885-9170-4268-838D-F1CA2880106D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuPlug", "NuPlug\NuPlug.csproj", "{96D30860-1BBB-4BB2-94BB-CB8B1DE54A72}"
 EndProject
