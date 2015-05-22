@@ -5,7 +5,7 @@
       - master
   version: 0.1.4.{build}
   os: Visual Studio 2015 RC
- test: off
+  test: off
   nuget:
     disable_publish_on_pr: true
   environment:
