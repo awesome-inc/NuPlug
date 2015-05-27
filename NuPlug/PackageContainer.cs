@@ -37,17 +37,24 @@ namespace NuPlug
             OnComposed();
         }
 
-        public void Dispose() { Container.Dispose(); }
+        public virtual void Dispose()
+        {
+            Container.Dispose();
+        }
 
-        public void AddDirectory(string libDir)
+        public virtual void AddDirectory(string libDir)
         {
             if (CatalogsMatching(libDir).Any())
                 return;
-            Catalog.Catalogs.Add(new DirectoryCatalog(libDir));
-            OnComposed();
+
+            using (new AssemblyResolver(libDir))
+            {
+                Catalog.Catalogs.Add(new DirectoryCatalog(libDir));
+                OnComposed();
+            }
         }
 
-        public void RemoveDirectory(string directory)
+        public virtual void RemoveDirectory(string directory)
         {
             foreach (var catalog in CatalogsMatching(directory))
                 Catalog.Catalogs.Remove(catalog);
