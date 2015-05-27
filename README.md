@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/247pcwhcvr4177at/branch/master?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug) ![NuGet Version](https://img.shields.io/nuget/v/NuPlug.svg?style=flat-square) ![NuGet Version](https://img.shields.io/nuget/dt/NuPlug.svg?style=flat-square)
+[![Build status](https://ci.appveyor.com/api/projects/status/247pcwhcvr4177at/branch/master?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug) ![NuGet Version](https://img.shields.io/nuget/v/NuPlug.svg) ![NuGet Version](https://img.shields.io/nuget/dt/NuPlug.svg) [![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/issue)](http://issuestats.com/github/awesome-inc/NuPlug) [![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/pr)](http://issuestats.com/github/awesome-inc/NuPlug)
 
 # NuPlug
 
