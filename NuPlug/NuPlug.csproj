@@ -72,8 +72,6 @@
     <Compile Include="NugetPackageContainer.cs" />
     <Compile Include="PackageManagerExtensions.cs" />
     <Compile Include="PackageManagerExtensions_Should.cs" />
-    <Compile Include="PackageRepositoryExtensions.cs" />
-    <Compile Include="PackageRepositoryExtensions_Should.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VersionHelper_Should.cs" />
     <Compile Include="VersionHelper.cs" />

@@ -25,6 +25,8 @@ namespace ConsoleSample
 
             packageManager.InstallPackages(packagesConfig);
 
+            packageManager.RemoveDuplicates();
+
             var modulePlugins = new NugetPackageContainer<IModule>(packageManager);
             modulePlugins.Update();
 

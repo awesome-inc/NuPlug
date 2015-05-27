@@ -30,5 +30,16 @@ namespace NuPlug
             if (exceptions.Any())
                 throw new AggregateException("Error while installing packages", exceptions);
         }
+
+        public static void RemoveDuplicates(this IPackageManager packageManager, bool forceRemove = false)
+        {
+            var duplicates = packageManager.LocalRepository.GetPackages()
+                .GroupBy(p => p.Id)
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g.OrderByDescending(p => p.Version).Skip(1))
+                .ToList();
+
+            duplicates.ForEach(p => packageManager.UninstallPackage(p, forceRemove, false));
+        }
     }
 }
