@@ -30,7 +30,7 @@ namespace NuPlug
                     .FirstOrDefault();
                 if (string.IsNullOrWhiteSpace(foundFile)) return null;
                 var assembly = Assembly.LoadFrom(foundFile);
-                Trace.WriteLine($"Resolved '{fileName}' from '{assembly.FullName}'...");
+                Trace.WriteLine($"Resolved '{fileName}' from '{libDir}'...");
                 return assembly;
             };
         }
