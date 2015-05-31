@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "ConsoleSample\ConsoleSample.csproj", "{B2F69885-9170-4268-838D-F1CA2880106D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "Samples\ConsoleSample\ConsoleSample.csproj", "{B2F69885-9170-4268-838D-F1CA2880106D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuPlug", "NuPlug\NuPlug.csproj", "{96D30860-1BBB-4BB2-94BB-CB8B1DE54A72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplePlugin", "SamplePlugin\SamplePlugin.csproj", "{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplePlugin", "Samples\SamplePlugin\SamplePlugin.csproj", "{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{52AEA1B8-C969-4E6B-971D-1CCE6F2DCDC9}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,6 +34,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		VersionInfo.g.cs = VersionInfo.g.cs
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2FFC9726-093A-4E1E-BBF1-6EBE1175394F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiPlugin", "Samples\WebApiPlugin\WebApiPlugin.csproj", "{CDD33868-DACC-40E2-B757-8121AA4C2F68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,8 +56,17 @@ Global
 		{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{120CA4A8-44B9-49DA-8959-014F0C2E7DA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDD33868-DACC-40E2-B757-8121AA4C2F68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDD33868-DACC-40E2-B757-8121AA4C2F68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDD33868-DACC-40E2-B757-8121AA4C2F68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDD33868-DACC-40E2-B757-8121AA4C2F68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B2F69885-9170-4268-838D-F1CA2880106D} = {2FFC9726-093A-4E1E-BBF1-6EBE1175394F}
+		{120CA4A8-44B9-49DA-8959-014F0C2E7DA4} = {2FFC9726-093A-4E1E-BBF1-6EBE1175394F}
+		{CDD33868-DACC-40E2-B757-8121AA4C2F68} = {2FFC9726-093A-4E1E-BBF1-6EBE1175394F}
 	EndGlobalSection
 EndGlobal

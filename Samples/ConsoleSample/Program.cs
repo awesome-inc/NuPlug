@@ -30,17 +30,15 @@ namespace ConsoleSample
             var modulePlugins = new NugetPackageContainer<IModule>(packageManager);
             modulePlugins.Update();
 
-            Configure(modulePlugins.Items);
+            RegisterPluginModules(modulePlugins.Items);
         }
 
-        private static void Configure(IEnumerable<IModule> modules)
+        private static void RegisterPluginModules(IEnumerable<IModule> modules)
         {
             var builder = new ContainerBuilder();
-
             foreach (var module in modules)
                 builder.RegisterModule(module);
-
-            var container = builder.Build();
+            builder.Build();
         }
     }
 }
