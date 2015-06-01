@@ -16,15 +16,19 @@ namespace NuPlug
         , IDisposable
         where TItem : class
     {
+        private readonly IResolveAssembly _assemblyResolver;
         public event EventHandler Updated;
-        public readonly CompositionBatch Batch = new CompositionBatch();
-        public readonly AggregateCatalog Catalog = new AggregateCatalog();
-        public readonly CompositionContainer Container;
+        private readonly AggregateCatalog _catalog = new AggregateCatalog();
+        private readonly CompositionContainer _container;
 
-        public PackageContainer()
+        // ReSharper disable once InconsistentNaming
+        internal readonly CompositionBatch _batch = new CompositionBatch();
+
+        public PackageContainer(IResolveAssembly assemblyResolver = null)
         {
-            Batch.AddPart(this);
-            Container = new CompositionContainer(Catalog);
+            _assemblyResolver = assemblyResolver ?? new AssemblyResolver();
+            _batch.AddPart(this);
+            _container = new CompositionContainer(_catalog);
             Items = new ObservableCollection<TItem>();
         }
 
@@ -33,40 +37,60 @@ namespace NuPlug
 
         public virtual void Update()
         {
-            Container.Compose(Batch);
-            OnComposed();
+            SyncCatalogs();
+            _container.Compose(_batch);
+            Updated?.Invoke(this, EventArgs.Empty);
         }
 
         public virtual void Dispose()
         {
-            Container.Dispose();
+            _container.Dispose();
+            _assemblyResolver.Dispose();
         }
 
-        public virtual void AddDirectory(string libDir)
+        protected void AddDirectory(string libDir)
+        {
+            if (_assemblyResolver.Directories.Contains(libDir))
+                return;
+            _assemblyResolver.Directories.Add(libDir);
+        }
+
+        protected void RemoveDirectory(string libDir)
+        {
+            if (_assemblyResolver.Directories.Contains(libDir))
+                _assemblyResolver.Directories.Remove(libDir);
+        }
+
+        private void SyncCatalogs()
+        {
+            // remove obsolete
+            var dirsToRemove = _catalog.Catalogs.OfType<DirectoryCatalog>().Select(c => c.FullPath)
+                .Except(_assemblyResolver.Directories);
+            foreach (var directory in dirsToRemove)
+                RemoveCatalogsFor(directory);
+
+            // add new
+            foreach (var directory in _assemblyResolver.Directories)
+                AddCatalogFor(directory);
+        }
+
+        private void AddCatalogFor(string libDir)
         {
             if (CatalogsMatching(libDir).Any())
                 return;
-
-            using (new AssemblyResolver(libDir))
-            {
-                Catalog.Catalogs.Add(new DirectoryCatalog(libDir));
-                OnComposed();
-            }
+            _catalog.Catalogs.Add(new DirectoryCatalog(libDir));
         }
 
-        public virtual void RemoveDirectory(string directory)
+        private void RemoveCatalogsFor(string directory)
         {
             foreach (var catalog in CatalogsMatching(directory))
-                Catalog.Catalogs.Remove(catalog);
-            OnComposed();
+                _catalog.Catalogs.Remove(catalog);
         }
-
-        private void OnComposed() { Updated?.Invoke(this, EventArgs.Empty); }
 
         private IEnumerable<DirectoryCatalog> CatalogsMatching(string directory)
         {
             var trimmed = directory.TrimEnd(Path.DirectorySeparatorChar);
-            return Catalog.Catalogs
+            return _catalog.Catalogs
                 .OfType<DirectoryCatalog>()
                 .Where(c => c.FullPath.StartsWith(trimmed))
                 .ToArray(); // NOTE: don't be lazy here to avoid 'collection modified'-errors

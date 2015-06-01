@@ -4,11 +4,12 @@ using Newtonsoft.Json.Converters;
 using Owin;
 using Swashbuckle.Application;
 
-namespace WebApiPlugin
+namespace RestPlugin
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class OwinWebApiConfig
     {
-        public static IDependencyResolver DependencyResolver { get; set; }
+        internal static IDependencyResolver DependencyResolver;
 
         public void Configuration(IAppBuilder appBuilder)
         {
@@ -33,8 +34,12 @@ namespace WebApiPlugin
 
             // add swagger/swashbuckle, cf.: https://github.com/domaindrivendev/Swashbuckle
             config
-                .EnableSwagger(c => c.SingleApiVersion("v1", "A title for your API"))
+                .EnableSwagger(c => c.SingleApiVersion("v1", "NuPlug REST Api sample"))
                 .EnableSwaggerUi();
+
+            // NOTE: not needed - cf.: http://docs.autofac.org/en/latest/integration/webapi.html#owin-integration
+            //appBuilder.UseAutofacMiddleware(_container);
+            //appBuilder.UseAutofacWebApi(config);
 
             appBuilder.UseWebApi(config);
         }

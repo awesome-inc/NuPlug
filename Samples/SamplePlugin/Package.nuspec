@@ -17,6 +17,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\SamplePlugin.dll" target="lib"/>
+    <file src="bin\$Configuration$\SamplePlugin.dll" target="lib"/>
   </files>
 </package>

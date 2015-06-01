@@ -20,7 +20,7 @@ namespace NuPlug
             _packageManager = packageManager;
 
             foreach (var package in _packageManager.LocalRepository.GetPackages())
-                AddDirectoryCatalog(package);
+                AddPackageDirectory(package);
 
             _packageManager.PackageInstalled += OnPackageInstalled;
             _packageManager.PackageUninstalled += OnPackageUninstalled;
@@ -28,7 +28,7 @@ namespace NuPlug
 
         private void OnPackageInstalled(object sender, PackageOperationEventArgs e)
         {
-            AddDirectoryCatalog(e.Package);
+            AddPackageDirectory(e.Package);
         }
 
         private void OnPackageUninstalled(object sender, PackageOperationEventArgs e)
@@ -37,24 +37,26 @@ namespace NuPlug
             RemoveDirectory(libDir);
         }
 
-        private void AddDirectoryCatalog(IPackage package)
+        private void AddPackageDirectory(IPackage package)
+        {
+            var libDir = GetLibDir(package);
+            if (!string.IsNullOrWhiteSpace(libDir))
+                AddDirectory(libDir);
+        }
+
+        private string GetLibDir(IPackage package)
         {
             var libDir = Path.Combine(_packageManager.PathResolver.GetInstallPath(package), Constants.LibDirectory);
             var dirInfo = new DirectoryInfo(libDir);
-            if (!dirInfo.Exists) return;
+            if (!dirInfo.Exists) return null;
 
             if (dirInfo.GetFiles("*.dll", SearchOption.TopDirectoryOnly).Any())
-            {
-                AddDirectory(dirInfo.FullName);
-            }
-            else
-            {
-                var folderNames = dirInfo.GetDirectories().Select(d => d.Name);
-                var bestMatch = _framework.Version.BestMatch(folderNames);
-                if (string.IsNullOrWhiteSpace(bestMatch)) return;
-                libDir = Path.Combine(dirInfo.FullName, bestMatch);
-                AddDirectory(libDir);
-            }
+                return dirInfo.FullName;
+
+            var folderNames = dirInfo.GetDirectories().Select(d => d.Name);
+            var bestMatch = _framework.Version.BestMatch(folderNames);
+            if (string.IsNullOrWhiteSpace(bestMatch)) return null;
+            return Path.Combine(dirInfo.FullName, bestMatch);
         }
     }
 }

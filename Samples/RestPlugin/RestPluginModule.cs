@@ -5,10 +5,10 @@ using Autofac.Core;
 using Autofac.Integration.WebApi;
 using Module = Autofac.Module;
 
-namespace WebApiPlugin
+namespace RestPlugin
 {
     [Export(typeof(IModule))]
-    public class WebApiPluginModule : Module
+    public class RestPluginModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

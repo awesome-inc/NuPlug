@@ -18,7 +18,7 @@ namespace NuPlug
             var sut = new PackageContainer<IDisposable>();
 
             var dummy = Substitute.For<IDisposable>();
-            sut.Batch.AddExportedValue(dummy);
+            sut._batch.AddExportedValue(dummy);
 
             sut.Update();
 

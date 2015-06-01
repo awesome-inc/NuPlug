@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>NuPlug.RestPlugin</id>
+    <version>$Version$</version>
+    <title>NuPlug.WebApiPlugin</title>
+    <authors>tmentzel, mkoertgen</authors>
+    <owners>tmentzel, mkoertgen</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A NuPlug sample plugin for Owin self hosting.</description>
+    <summary>A NuPlug sample plugin for Owin self hosting.</summary>
+    <copyright/>
+    <releaseNotes>Revision: $Revision$</releaseNotes>
+    <projectUrl>https://github.com/awesome-inc/NuPlug</projectUrl>
+    <dependencies>
+      <dependency id="Autofac" version="3.5.2" />
+      <dependency id="Autofac.WebApi2" version="3.4.0" />
+      <dependency id="Microsoft.AspNet.Cors" version="5.2.3" />
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
+      <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3" />
+      <dependency id="Microsoft.AspNet.WebApi.Cors" version="5.2.3" />
+      <dependency id="Microsoft.AspNet.WebApi.Owin" version="5.2.3" />
+      <dependency id="Microsoft.AspNet.WebApi.OwinSelfHost" version="5.2.3" />
+      <dependency id="Microsoft.Owin" version="3.0.1" />
+      <dependency id="Microsoft.Owin.Cors" version="3.0.1" />
+      <dependency id="Microsoft.Owin.Diagnostics" version="3.0.1" />
+      <dependency id="Microsoft.Owin.Host.HttpListener" version="3.0.1" />
+      <dependency id="Microsoft.Owin.Hosting" version="3.0.1" />
+      <dependency id="Microsoft.Owin.SelfHost" version="3.0.1" />
+      <dependency id="Newtonsoft.Json" version="6.0.4" />
+      <dependency id="Owin" version="1.0" />
+      <dependency id="Swashbuckle.Core" version="5.1.5" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\$Configuration$\RestPlugin.dll" target="lib"/>
+  </files>
+</package>
