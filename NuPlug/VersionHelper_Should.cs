@@ -7,7 +7,7 @@ namespace NuPlug
 {
     [TestFixtureFor(typeof(VersionHelper))]
     // ReSharper disable InconsistentNaming
-    class VersionHelper_Should
+    internal class VersionHelper_Should
     {
         [Test]
         public void Test_GetTargetFramework()

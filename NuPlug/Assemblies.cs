@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace NuPlug
 {
-    static class Assemblies
+    internal static class Assemblies
     {
         public static readonly string HomePath = GetDirectory(null);
 

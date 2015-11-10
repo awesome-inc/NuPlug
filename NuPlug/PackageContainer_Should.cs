@@ -10,7 +10,7 @@ namespace NuPlug
 {
     [TestFixtureFor(typeof(PackageContainer<>))]
     // ReSharper disable InconsistentNaming
-    class PackageContainer_Should
+    internal class PackageContainer_Should
     {
         [Test]
         public void Compose_on_Update()

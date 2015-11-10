@@ -75,6 +75,8 @@
     <Compile Include="PackageManagerExtensions_Should.cs" />
     <Compile Include="PackageRepositories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TraceLogger.cs" />
+    <Compile Include="TraceLogger_Should.cs" />
     <Compile Include="VersionHelper_Should.cs" />
     <Compile Include="VersionHelper.cs" />
   </ItemGroup>
