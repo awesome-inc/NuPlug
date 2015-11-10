@@ -5,7 +5,7 @@ using PluginContracts;
 namespace SamplePlugin
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    class Dummy
+    internal class Dummy
     {
         public Dummy(IPluginHost pluginHost)
         {

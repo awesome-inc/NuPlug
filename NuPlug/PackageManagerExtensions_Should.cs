@@ -11,7 +11,7 @@ namespace NuPlug
 {
     [TestFixtureFor(typeof(PackageManagerExtensions))]
     // ReSharper disable InconsistentNaming
-    class PackageManagerExtensions_Should
+    internal class PackageManagerExtensions_Should
     {
         [Test]
         public void Safely_install_packages()
@@ -58,7 +58,7 @@ namespace NuPlug
             packageManager.Received(2).UninstallPackage(Arg.Is<IPackage>(p => p.Version.Version.Major < 1), false, false);
         }
 
-        static IPackage CreatePackage(string id, string version)
+        private static IPackage CreatePackage(string id, string version)
         {
             var package = Substitute.For<IPackage>();
             package.Id.Returns(id);
