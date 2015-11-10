@@ -27,12 +27,12 @@
       <dependency id="Microsoft.Owin.Host.HttpListener" version="3.0.1" />
       <dependency id="Microsoft.Owin.Hosting" version="3.0.1" />
       <dependency id="Microsoft.Owin.SelfHost" version="3.0.1" />
-      <dependency id="Newtonsoft.Json" version="6.0.4" />
+      <dependency id="Newtonsoft.Json" version="7.0.1" />
       <dependency id="Owin" version="1.0" />
       <dependency id="Swashbuckle.Core" version="5.1.5" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\$Configuration$\RestPlugin.dll" target="lib"/>
+    <file src="bin\$Configuration$\RestPlugin.dll" target="lib\net45"/>
   </files>
 </package>

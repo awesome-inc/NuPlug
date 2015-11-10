@@ -10,7 +10,7 @@
     <Message Text="NuGet Push disabled for SamplePlugin. " Importance="High" />
   </Target>
 
-  <Target Name="CopyLocalPackage" DependsOnTargets="Package" AfterTargets="Build" Condition="'$(UseLocalPackages)' == 'True' " >
+  <Target Name="CopyLocalPackage" DependsOnTargets="Package" AfterTargets="Build" Condition="'$(UseLocalPackages)' == 'True' And '$(NCrunch)' != '1'" >
     <ItemGroup>
       <Packages Include="$(ProjectDir)\*.nupkg"/>
     </ItemGroup>
