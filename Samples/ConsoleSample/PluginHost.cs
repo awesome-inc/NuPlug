@@ -5,13 +5,16 @@ using PluginContracts;
 namespace ConsoleSample
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    class PluginHost : IPluginHost
+    internal class PluginHost : IPluginHost
     {
         public PluginHost()
         {
             var assemblyName = (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).GetName();
             Name = assemblyName.Name;
             Version = assemblyName.Version.ToString();
+#if !NCRUNCH
+            Version = GitVersionInformation.FullSemVer;
+#endif
         }
 
         public string Name { get; }

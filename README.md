@@ -22,7 +22,7 @@ Then in the startup part, create a NuGet Package Manager. Here is an example sni
 
     var packageSource = "https://mynugetfeed/"; // UNC share, folder, ... 
     var feed = PackageRepositoryFactory.Default.CreateRepository(packageSource);
-	var packageManager = new PackageManager(feed, "plugins");
+	var packageManager = new PackageManager(feed, "plugins") { Logger = new TraceLogger() };
 
 This will download NuGet packages from the specified package source to the output directory `plugins`.
 
@@ -80,7 +80,8 @@ During hot development, short feedback cycles are king. Note that, decoupling yo
 
 1. Have an `AfterBuild` target to copy your modules output to this directory. For instance, we include a `Module.targets` containing
 
-		<Target Name="CopyModuleLocal" AfterTargets="Build" Condition="'$(Configuration)'=='Debug'">
+		<Target Name="CopyModuleLocal" AfterTargets="Build" 
+             Condition="'$(Configuration)'=='Debug' And '$(NCrunch)' != '1'">
 		  <ItemGroup>
 		    <ModuleBinaries Include="$(OutDir)\**\*.*"/>
 		  </ItemGroup>

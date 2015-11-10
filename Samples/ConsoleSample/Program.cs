@@ -11,7 +11,7 @@ using PluginContracts;
 
 namespace ConsoleSample
 {
-    static class Program
+    internal static class Program
     {
         private static void Main(string[] args)
         {
@@ -54,14 +54,17 @@ namespace ConsoleSample
                 // , "http://localhost:8888/nuget/feed" // cf.: https://github.com/mkoertgen/hello.nuget.server
                 , "https://packages.nuget.org/api/v2");
 
-            var packageManager = new PackageManager(repo, "plugins");
+            var packageManager = new PackageManager(repo, "plugins") {Logger = new TraceLogger()};
 
-            packageManager.PackageInstalling += (sender, args) => Trace.TraceInformation("Adding package '{0} {1}' to '{2}'", args.Package.Id, args.Package.Version, args.InstallPath);
-            packageManager.PackageInstalled += (sender, args) => Trace.TraceInformation("Successfully installed '{0} {1}'", args.Package.Id, args.Package.Version);
-            packageManager.PackageUninstalling += (sender, args) => Trace.TraceInformation("Removing package '{0} {1}' to '{2}'", args.Package.Id, args.Package.Version, args.InstallPath);
-            packageManager.PackageUninstalled += (sender, args) => Trace.TraceInformation("Successfully uninstalled '{0} {1}'", args.Package.Id, args.Package.Version);
+            //packageManager.PackageInstalling += (sender, args) => Trace.TraceInformation("Adding package '{0} {1}' to '{2}'", args.Package.Id, args.Package.Version, args.InstallPath);
+            //packageManager.PackageInstalled += (sender, args) => Trace.TraceInformation("Successfully installed '{0} {1}'", args.Package.Id, args.Package.Version);
+            //packageManager.PackageUninstalling += (sender, args) => Trace.TraceInformation("Removing package '{0} {1}' to '{2}'", args.Package.Id, args.Package.Version, args.InstallPath);
+            //packageManager.PackageUninstalled += (sender, args) => Trace.TraceInformation("Successfully uninstalled '{0} {1}'", args.Package.Id, args.Package.Version);
 
             var version = Assembly.GetEntryAssembly().GetName().Version.ToString();
+#if !NCRUNCH
+            version = GitVersionInformation.NuGetVersion;
+#endif
             var packagesConfig = new XDocument(
                 new XElement("packages",
                     new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", version))

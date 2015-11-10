@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace NuPlug
 {
-    class AssemblyResolver : IResolveAssembly
+    internal class AssemblyResolver : IResolveAssembly
     {
         private bool _isDisposed;
         public IList<string> Directories { get; }
