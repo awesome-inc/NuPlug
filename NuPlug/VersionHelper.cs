@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
-using System.Xml.Linq;
 using NuGet;
 
 namespace NuPlug
 {
-#if DEBUG
-    [NEdifis.Attributes.TestedBy(typeof(VersionHelper_Should))]
-#endif
     public static class VersionHelper
     {
         internal static string BestMatch(this Version version, IEnumerable<string> folderNames)

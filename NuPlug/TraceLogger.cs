@@ -3,9 +3,6 @@ using NuGet;
 
 namespace NuPlug
 {
-#if DEBUG
-    [NEdifis.Attributes.TestedBy(typeof(PackageManagerExtensions_Should))]
-#endif
     public class TraceLogger : ILogger
     {
         public FileConflictResolution ResolveFileConflict(string message)

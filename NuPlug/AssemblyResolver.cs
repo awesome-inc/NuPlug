@@ -25,7 +25,7 @@ namespace NuPlug
             _isDisposed = true;
         }
 
-        private Assembly ResolveAssembly(object sender, ResolveEventArgs args)
+        internal Assembly ResolveAssembly(object sender, ResolveEventArgs args)
         {
             if (!Directories.Any()) return null;
 
@@ -62,7 +62,7 @@ namespace NuPlug
             return assembly;
         }
 
-        private static bool Matching(AssemblyName assemblyName, string name, Version version)
+        internal static bool Matching(AssemblyName assemblyName, string name, Version version)
         {
             return assemblyName.Name == name && (version == null || version >= assemblyName.Version);
         }

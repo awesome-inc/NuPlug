@@ -8,9 +8,6 @@ using System.Linq;
 
 namespace NuPlug
 {
-#if DEBUG
-    [NEdifis.Attributes.TestedBy(typeof(PackageContainer_Should))]
-#endif
     public class PackageContainer<TItem>
         : IPackageContainer<TItem>
         , IDisposable
