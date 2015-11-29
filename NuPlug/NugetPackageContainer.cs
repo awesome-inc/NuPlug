@@ -6,7 +6,7 @@ using NuGet;
 
 namespace NuPlug
 {
-    public class NugetPackageContainer<TItem> 
+    public class NuGetPackageContainer<TItem> 
         : PackageContainer<TItem> where TItem : class 
     {
         private readonly IPackageManager _packageManager;
@@ -14,7 +14,7 @@ namespace NuPlug
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly FrameworkName _framework = VersionHelper.GetTargetFramework();
 
-        public NugetPackageContainer(IPackageManager packageManager) 
+        public NuGetPackageContainer(IPackageManager packageManager) 
         {
             if (packageManager == null) throw new ArgumentNullException(nameof(packageManager));
             _packageManager = packageManager;

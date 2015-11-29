@@ -77,7 +77,7 @@ namespace ConsoleSample
             Trace.TraceInformation("Removing duplicates...");
             packageManager.RemoveDuplicates();
 
-            return new NugetPackageContainer<IModule>(packageManager);
+            return new NuGetPackageContainer<IModule>(packageManager);
         }
 
         private static string FormatException(Exception ex)

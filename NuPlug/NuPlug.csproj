@@ -62,6 +62,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assemblies.cs" />
@@ -70,6 +71,9 @@
     <Compile Include="AssemblyResolver_Should.cs" />
     <Compile Include="IPackageContainer.cs" />
     <Compile Include="IResolveAssembly.cs" />
+    <Compile Include="MessageLevelExtensions.cs" />
+    <Compile Include="MessageLevelExtensions_Should.cs" />
+    <Compile Include="NuGetPackageContainer_Should.cs" />
     <Compile Include="NuPlugConventions.cs" />
     <Compile Include="PackageContainer.cs" />
     <Compile Include="PackageContainer_Should.cs" />
