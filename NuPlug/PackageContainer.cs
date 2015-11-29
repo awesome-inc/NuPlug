@@ -76,7 +76,8 @@ namespace NuPlug
         {
             if (CatalogsMatching(libDir).Any())
                 return;
-            _catalog.Catalogs.Add(new DirectoryCatalog(libDir));
+            var catalog = new DirectoryCatalog(libDir);
+            _catalog.Catalogs.Add(catalog);
         }
 
         private void RemoveCatalogsFor(string directory)
