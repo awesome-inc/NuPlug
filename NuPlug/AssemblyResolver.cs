@@ -11,12 +11,15 @@ namespace NuPlug
     {
         private bool _isDisposed;
         public IList<string> Directories { get; }
-        internal bool TraceAlways { get; set; } = false;
+        public bool TraceAlways { get; set; }
 
         public AssemblyResolver(IEnumerable<string> directories = null)
         {
             Directories = (directories ?? Enumerable.Empty<string>()).ToList();
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+#if DEBUG
+            TraceAlways = true;
+#endif
         }
 
         public void Dispose()

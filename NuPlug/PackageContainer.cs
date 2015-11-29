@@ -30,6 +30,7 @@ namespace NuPlug
         }
 
         [ImportMany(AllowRecomposition = true)]
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
         public IEnumerable<TItem> Items { get; private set; }
 
         public virtual void Update()
