@@ -13,6 +13,7 @@ namespace NuPlug
     {
         private readonly Assembly _assembly;
         private readonly Func<Type, bool> _typeFilter;
+        private readonly ReflectionContext _reflectionContext;
 
         private ComposablePartCatalog _innerCatalog;
         private List<ComposablePartDefinition> _parts;
@@ -21,16 +22,17 @@ namespace NuPlug
         private IEnumerable<ComposablePartDefinition> PartsInternal => _parts ?? (_parts = GetParts());
 
 
-        public SafeAssemblyCatalog(Assembly assembly, Func<Type, bool> typeFilter)
+        public SafeAssemblyCatalog(Assembly assembly, Func<Type, bool> typeFilter, ReflectionContext reflectionContext = null)
         {
             if (assembly == null) throw new ArgumentNullException(nameof(assembly));
             if (typeFilter == null) throw new ArgumentNullException(nameof(typeFilter));
             _assembly = assembly;
             _typeFilter = typeFilter;
+            _reflectionContext = reflectionContext;
         }
 
-        public SafeAssemblyCatalog(string fullName, Func<Type, bool> typeFilter = null)
-            : this(LoadAssembly(fullName), typeFilter ?? (type => type.IsPublic))
+        public SafeAssemblyCatalog(string fullName, Func<Type, bool> typeFilter = null, ReflectionContext reflectionContext = null)
+            : this(LoadAssembly(fullName), typeFilter ?? (type => type.IsPublic), reflectionContext)
         { 
         }
 
@@ -53,6 +55,8 @@ namespace NuPlug
         private ComposablePartCatalog CreateCatalog()
         {
             var types = SelectTypes();
+            if (_reflectionContext != null)
+                return new TypeCatalog(types, _reflectionContext);
             return new TypeCatalog(types);
         }
 

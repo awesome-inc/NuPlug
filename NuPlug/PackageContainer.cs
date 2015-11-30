@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace NuPlug
 {
@@ -13,13 +14,25 @@ namespace NuPlug
         , IDisposable
         where TItem : class
     {
-        public event EventHandler Updated;
         private readonly AggregateCatalog _catalog = new AggregateCatalog();
         private readonly CompositionContainer _container;
         private readonly IResolveAssembly _assemblyResolver;
+        private Func<Type, bool> _typeFilter = type => IsPublicImplementationOf(type);
 
+        public event EventHandler Updated;
         public CompositionBatch Batch { get; } = new CompositionBatch();
-        public Func<Type, bool> TypeFilter { get; set; } = type => IsPublicImplementationOf(type);
+
+        public Func<Type, bool> TypeFilter
+        {
+            get { return _typeFilter; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException(nameof(value), $"'{nameof(TypeFilter)}' must not be null.");
+                _typeFilter = value;
+            }
+        }
+
+        public ReflectionContext Conventions { get; set; }
 
         private static bool IsPublicImplementationOf(Type type)
         {
@@ -80,7 +93,7 @@ namespace NuPlug
         {
             if (CatalogsMatching(libDir).Any())
                 return;
-            var catalog = new SafeDirectoryCatalog(libDir, TypeFilter);
+            var catalog = new SafeDirectoryCatalog(libDir, TypeFilter, Conventions);
             _catalog.Catalogs.Add(catalog);
         }
 

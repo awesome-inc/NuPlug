@@ -16,7 +16,7 @@ namespace NuPlug
         public string FullPath => _dirInfo.FullName;
         public override IQueryable<ComposablePartDefinition> Parts => _catalog.Parts;
 
-        public SafeDirectoryCatalog(string directory, Func<Type,bool> typeFilter = null)
+        public SafeDirectoryCatalog(string directory, Func<Type,bool> typeFilter = null, ReflectionContext reflectionContext = null)
         {
             _dirInfo = new DirectoryInfo(directory);
             _catalog = new AggregateCatalog();
@@ -26,7 +26,7 @@ namespace NuPlug
             {
                 try
                 {
-                    var catalog = new SafeAssemblyCatalog(file.FullName, typeFilter);
+                    var catalog = new SafeAssemblyCatalog(file.FullName, typeFilter, reflectionContext);
 
                     //Force MEF to load the plugin and figure out if there are any exports
                     // good assemblies will not throw the RTLE exception and can be added to the catalog

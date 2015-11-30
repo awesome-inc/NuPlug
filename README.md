@@ -76,7 +76,43 @@ You can filter the types for MEF to discover by using the `TypeFilter` property 
 		type.IsPublic && type.IsClass && !type.IsAbstract && typeof(TItem).IsAssignableFrom(type);
 
 This assumes that MEF does not need to resolve or compose any dependencies to instantiate the requested plugins.
-Note that in the provided examples we use AutoFac for dependency injection, not MEF.
+Note that in the provided examples we use [AutoFac](http://autofac.org/) for dependency injection, not MEF.
+
+#### Register plugin dependencies (MEF)
+
+In case your plugins need dependencies, you can add these to the package container's [CompositionBatch](https://msdn.microsoft.com/en-us/library/system.componentmodel.composition.hosting.compositionbatch(v=vs.110).aspx). Here is an example
+
+    [Export(typeof(IPlugin)
+    public class MyPlugin : IPlugin
+    {
+        public MyClass(IPluginDependency dependency) { ... }
+    }
+
+Then setup the package container like this
+
+    var packageContainer = new PackageContainer<IPlugin>();
+    // add service provider to satisfy plugin constructors
+	packageContainer.AddExportedValue(_serviceProvider);
+    ...
+    if (!packageContainer.Items.Any())
+    	packageContainer.Update();
+
+#### Using MEF conventions
+
+You can even use MEF conventions by setting the `Conventions` property like this
+
+    var conventions = new RegistrationBuilder();
+    conventions.ForTypesDerivedFrom<IDisposable>()
+        .ExportInterfaces();
+
+    packageContainer.Conventions = conventions;
+    ...
+    if (!packageContainer.Items.Any())
+    	packageContainer.Update();
+
+Note that you use conventions only to select exports but not to *hide* types like with [PartNonDiscoverableAttribute](https://msdn.microsoft.com/en-us/library/system.componentmodel.composition.partnotdiscoverableattribute(v=vs.110).aspx). This is why we added the 
+`TypeFilter` property. 
+
 ## Where to go from here?
 
 Some hints getting up to speed in production with NuPlug
@@ -94,16 +130,16 @@ During hot development, short feedback cycles are king. Note that, decoupling yo
 		  </PropertyGroup>
 		
 		  <Target Name="CopyLocalPackage" DependsOnTargets="Package" AfterTargets="Build" Condition="'$(UseLocalPackages)' == 'True' " >
-		  <ItemGroup>
+		    <ItemGroup>
 		      <Packages Include="$(ProjectDir)\*.nupkg"/>
-		  </ItemGroup>
+		    </ItemGroup>
 		    <Message Text="Copying Package '$(ProjectName)' to output ..." Importance="High" Condition="'@(Packages->Count())' &gt; 0"/>
 		    <Copy SourceFiles="@(Packages)"
 		          DestinationFolder="$(SolutionDir)Samples\feed\"
 		          SkipUnchangedFiles="True"
 		          Condition="'@(Packages->Count())' &gt; 0"/>
-		</Target>
-	
+		  </Target>
+		
 	
 2. Have a factory for the `IPackageContainer<T>` deciding which implementation to use at runtime. For `DEBUG` just use the `PackageContainer<T>` base class like this:
 
