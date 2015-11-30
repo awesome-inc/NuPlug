@@ -13,6 +13,10 @@
     <NUnitResultFormat>nunit3</NUnitResultFormat>
   </PropertyGroup>
 
+  <!-- ## Automatically import sample/plugin targets -->
+  <Import Project="$(SolutionDir)\Samples\Sample.targets"
+     Condition="$(ProjectDir.Contains('\Samples\')) And '$(NCrunch)' != '1'"/>
+  
   <!-- ## Automatically import project-specific overrides (place this last) -->
   <Import Project="$(ProjectDir)\$(ProjectName).targets"
      Condition="Exists('$(ProjectDir)\$(ProjectName).targets') And '$(NCrunch)' != '1'"/>

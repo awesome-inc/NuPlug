@@ -115,9 +115,6 @@
     <Compile Include="VersionController.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Plugin.targets">
-      <Link>Plugin.targets</Link>
-    </None>
     <None Include="app.config" />
     <None Include="Package.nuspec" />
     <None Include="packages.config" />
@@ -129,7 +126,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\Plugin.targets" />
   <Import Project="..\..\packages\GitVersionTask.3.3.0\build\dotnet\GitVersionTask.targets" Condition="Exists('..\..\packages\GitVersionTask.3.3.0\build\dotnet\GitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
