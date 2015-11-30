@@ -7,8 +7,8 @@
     <authors>tmentzel, mkoertgen</authors>
     <owners>tmentzel, mkoertgen</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>NuPlug - plugins powered by NuGet.</description>
-    <summary>NuPlug - plugins powered by NuGet.</summary>
+    <description>NuPlug - plugins powered by NuGet & MEF.</description>
+    <summary>NuPlug - plugins powered by NuGet & MEF.</summary>
     <copyright/>
     <releaseNotes>Revision: $Revision$</releaseNotes>
     <projectUrl>https://github.com/awesome-inc/NuPlug</projectUrl>
@@ -18,10 +18,10 @@
       <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework="" />
     </frameworkAssemblies>
     <dependencies>
-      <dependency id="NuGet.Core" version="2.8.5" />
+      <dependency id="NuGet.Core" version="2.9.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\NuPlug.dll" target="lib"/>
+    <file src="bin\Release\NuPlug.dll" target="lib\net45"/>
   </files>
 </package>
