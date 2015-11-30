@@ -7,8 +7,8 @@
     <authors>tmentzel, mkoertgen</authors>
     <owners>tmentzel, mkoertgen</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>NuPlug - plugins powered by NuGet & MEF.</description>
-    <summary>NuPlug - plugins powered by NuGet & MEF.</summary>
+    <description>NuPlug - plugins powered by NuGet &amp; MEF.</description>
+    <summary>NuPlug - plugins powered by NuGet &amp; MEF.</summary>
     <copyright/>
     <releaseNotes>Revision: $Revision$</releaseNotes>
     <projectUrl>https://github.com/awesome-inc/NuPlug</projectUrl>
