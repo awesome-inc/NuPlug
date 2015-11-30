@@ -17,7 +17,7 @@
     - ps: gitversion /l console /output buildserver
     - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
-  - build.bat NuPlug\NuPlug.csproj /t:Deploy /v:m
+  - build.bat NuPlug\NuPlug.csproj /t:Test;Deploy /v:m
 #  after_build:
 #  - ps: >-
 #      $wc = New-Object 'System.Net.WebClient'
