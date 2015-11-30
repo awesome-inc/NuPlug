@@ -18,15 +18,18 @@ namespace NuPlug
         private readonly CompositionContainer _container;
         private readonly IResolveAssembly _assemblyResolver;
 
-        public Func<Type, bool> TypeFilter { get; set; } = type => true;
+        public CompositionBatch Batch { get; } = new CompositionBatch();
+        public Func<Type, bool> TypeFilter { get; set; } = type => IsPublicImplementationOf(type);
 
-        // ReSharper disable once InconsistentNaming
-        internal readonly CompositionBatch _batch = new CompositionBatch();
+        private static bool IsPublicImplementationOf(Type type)
+        {
+            return type.IsPublic && type.IsClass && !type.IsAbstract && typeof(TItem).IsAssignableFrom(type);
+        }
 
         public PackageContainer(IResolveAssembly assemblyResolver = null)
         {
             _assemblyResolver = assemblyResolver ?? new AssemblyResolver();
-            _batch.AddPart(this);
+            Batch.AddPart(this);
             _container = new CompositionContainer(_catalog);
         }
 
@@ -37,7 +40,7 @@ namespace NuPlug
         public virtual void Update()
         {
             SyncCatalogs();
-            _container.Compose(_batch);
+            _container.Compose(Batch);
             Updated?.Invoke(this, EventArgs.Empty);
         }
 

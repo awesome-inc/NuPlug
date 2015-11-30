@@ -30,7 +30,7 @@ Next, you need to specify which plugin packages to load. The most common way is 
 
 	var packagesConfig = new XDocument(
 		new XElement("packages",
-			new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", "0.1.5.0"))
+			new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", version))
 		));
 
 Then install your plugin packages by
@@ -68,6 +68,15 @@ For the plugin part, you need to [export](https://msdn.microsoft.com/en-us/libra
 
 The [build a NuGet package](https://docs.nuget.org/create/creating-and-publishing-a-package) of your plugin project, push it to your feed and you are set.
 
+#### Controlling type discovery from plugins
+
+You can filter the types for MEF to discover by using the `TypeFilter` property of `PackageContainer<TItem>`. By default, the package container only discovers public implementations of `TItem`, i.e.
+
+	TypeFilter = type =>
+		type.IsPublic && type.IsClass && !type.IsAbstract && typeof(TItem).IsAssignableFrom(type);
+
+This assumes that MEF does not need to resolve or compose any dependencies to instantiate the requested plugins.
+Note that in the provided examples we use AutoFac for dependency injection, not MEF.
 ## Where to go from here?
 
 Some hints getting up to speed in production with NuPlug
@@ -75,21 +84,26 @@ Some hints getting up to speed in production with NuPlug
 ### 1. Automate packaging
 To get up to speed you should automate as much of the manual tasks as possible and make it part of your build process. For instance, we do NuGet packaging using [OneClickBuild](https://github.com/awesome-inc/OneClickBuild)).
 
-### 2. Cutting corners in `DEBUG`
+### 2. Speeding up development cycles for `DEBUG`
 During hot development, short feedback cycles are king. Note that, decoupling your code using plugins is cool but is likely to increase your development cycles unless you automate building and publishing the plugins within the standard Visual Studio build. To move fast, we totally skip NuGet packaging during `DEBUG` and just load the plugin assemblies from a directory. For this to work, you need two things
 
-1. Have an `AfterBuild` target to copy your modules output to this directory. For instance, we include a `Module.targets` containing
+1. Have an `AfterBuild` target to copy your modules output to this directory. For instance, we include a [Sample.targets](Samples\Sample.targets) containing a step to auto-copy the build plugin package to the local feed directory 
 
-		<Target Name="CopyModuleLocal" AfterTargets="Build" 
-			 Condition="'$(Configuration)'=='Debug' And '$(NCrunch)' != '1'">
+		<PropertyGroup>
+		    <UseLocalPackages Condition="'$(Configuration)' == 'Debug' And $(RootNamespace.EndsWith('Plugin')) And '$(NCrunch)' != '1'">True</UseLocalPackages>
+		  </PropertyGroup>
+		
+		  <Target Name="CopyLocalPackage" DependsOnTargets="Package" AfterTargets="Build" Condition="'$(UseLocalPackages)' == 'True' " >
 		  <ItemGroup>
-			<ModuleBinaries Include="$(OutDir)\**\*.*"/>
+		      <Packages Include="$(ProjectDir)\*.nupkg"/>
 		  </ItemGroup>
-		  <Message Text="Copying Module '$(ProjectName)' to output ..." Importance="High" />
-		  <Copy SourceFiles="@(ModuleBinaries)" 
-			DestinationFolder="$(SolutionDir)Modules\_output\$(ProjectName)\%(RecursiveDir)"
-			SkipUnchangedFiles="True"/>
+		    <Message Text="Copying Package '$(ProjectName)' to output ..." Importance="High" Condition="'@(Packages->Count())' &gt; 0"/>
+		    <Copy SourceFiles="@(Packages)"
+		          DestinationFolder="$(SolutionDir)Samples\feed\"
+		          SkipUnchangedFiles="True"
+		          Condition="'@(Packages->Count())' &gt; 0"/>
 		</Target>
+	
 	
 2. Have a factory for the `IPackageContainer<T>` deciding which implementation to use at runtime. For `DEBUG` just use the `PackageContainer<T>` base class like this:
 
@@ -108,5 +122,5 @@ During hot development, short feedback cycles are king. Note that, decoupling yo
 			return packageContainer;
 		}
 
-with `localPath ~= ..\..\..\Modules\_output\`. 
+with `localPath ~= ..\..\..\feed\`. 
  
