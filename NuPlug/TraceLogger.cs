@@ -3,9 +3,6 @@ using NuGet;
 
 namespace NuPlug
 {
-#if DEBUG
-    [NEdifis.Attributes.TestedBy(typeof(PackageManagerExtensions_Should))]
-#endif
     public class TraceLogger : ILogger
     {
         public FileConflictResolution ResolveFileConflict(string message)
@@ -26,20 +23,5 @@ namespace NuPlug
         }
 
         public FileConflictResolution FileConflictResolution { get; set; } = FileConflictResolution.Ignore;
-    }
-
-    internal static class MessageLevelExtensions
-    {
-        internal static TraceLevel ToTraceLevel(this MessageLevel messageLevel)
-        {
-            switch (messageLevel)
-            {
-                case MessageLevel.Debug: return TraceLevel.Verbose;
-                case MessageLevel.Error: return TraceLevel.Error;
-                case MessageLevel.Info: return TraceLevel.Info;
-                case MessageLevel.Warning: return TraceLevel.Warning;
-            }
-            return TraceLevel.Off;
-        }
     }
 }
