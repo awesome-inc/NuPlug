@@ -4,20 +4,34 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
-using System.Threading;
 
 namespace NuPlug
 {
     internal class SafeAssemblyCatalog : ComposablePartCatalog
     {
         private readonly Assembly _assembly;
-        private ComposablePartCatalog _innerCatalog;
-        private volatile List<ComposablePartDefinition> _parts;
+        private readonly Func<Type, bool> _typeFilter;
 
-        public SafeAssemblyCatalog(string fullName)
+        private ComposablePartCatalog _innerCatalog;
+        private List<ComposablePartDefinition> _parts;
+
+        private ComposablePartCatalog InnerCatalog => _innerCatalog ?? (_innerCatalog = CreateCatalog());
+        private IEnumerable<ComposablePartDefinition> PartsInternal => _parts ?? (_parts = GetParts());
+
+
+        public SafeAssemblyCatalog(Assembly assembly, Func<Type, bool> typeFilter)
         {
-            _assembly = LoadAssembly(fullName);
+            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+            if (typeFilter == null) throw new ArgumentNullException(nameof(typeFilter));
+            _assembly = assembly;
+            _typeFilter = typeFilter;
+        }
+
+        public SafeAssemblyCatalog(string fullName, Func<Type, bool> typeFilter = null)
+            : this(LoadAssembly(fullName), typeFilter ?? (type => type.IsPublic))
+        { 
         }
 
         public override IEnumerable<Tuple<ComposablePartDefinition, ExportDefinition>> GetExports(ImportDefinition definition)
@@ -36,8 +50,39 @@ namespace NuPlug
             base.Dispose(disposing);
         }
 
-        private ComposablePartCatalog InnerCatalog => _innerCatalog 
-            ?? (_innerCatalog = new TypeCatalog(_assembly.GetLoadableTypes()));
+        private ComposablePartCatalog CreateCatalog()
+        {
+            var types = SelectTypes();
+            return new TypeCatalog(types);
+        }
+
+        private IEnumerable<Type> SelectTypes()
+        {
+            return GetLoadableTypes(_assembly)
+                .Where(_typeFilter);
+        }
+
+        private List<ComposablePartDefinition> GetParts()
+        {
+            var parts = new List<ComposablePartDefinition>();
+            var types = SelectTypes();
+            foreach (var type in types)
+            {
+                try
+                {
+                    var definition = AttributedModelServices.CreatePartDefinition(type, null, false);
+                    if (definition != null)
+                    {
+                        parts.Add(definition);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine(ex.Message);
+                }
+            }
+            return parts;
+        }
 
         private static Assembly LoadAssembly(string codeBase)
         {
@@ -50,40 +95,26 @@ namespace NuPlug
             }
             catch (ArgumentException)
             {
-                assemblyName = new AssemblyName {CodeBase = codeBase};
+                assemblyName = new AssemblyName { CodeBase = codeBase };
             }
 
             return Assembly.Load(assemblyName);
         }
 
-        private IEnumerable<ComposablePartDefinition> PartsInternal
+        private static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
         {
-            get
+            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+            // http://stackoverflow.com/questions/7889228/how-to-prevent-reflectiontypeloadexception-when-calling-assembly-gettypes        
+            // http://haacked.com/archive/2012/07/23/get-all-types-in-an-assembly.aspx/
+            try
             {
-                if (_parts == null)
-                {
-                    var collection = new List<ComposablePartDefinition>();
-                    var types = _assembly.GetLoadableTypes();
-                    foreach (var type in types)
-                    {
-                        try
-                        {
-                            var definition = AttributedModelServices.CreatePartDefinition(type, null, false);
-                            if (definition != null)
-                            {
-                                collection.Add(definition);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.WriteLine(ex.Message);
-                        }
-                    }
-                    _parts = collection;
-                }
-                return _parts;
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                Trace.WriteLine(e.Message);
+                return e.Types.Where(t => t != null);
             }
         }
-
     }
 }

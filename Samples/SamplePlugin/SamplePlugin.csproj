@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dummy.cs" />
-    <Compile Include="DummyFixture.cs" />
+    <Compile Include="Dummy_Should.cs" />
     <Compile Include="SamplePluginModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

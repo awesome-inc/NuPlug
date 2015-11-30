@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace NuPlug
 {
@@ -15,7 +16,7 @@ namespace NuPlug
         public string FullPath => _dirInfo.FullName;
         public override IQueryable<ComposablePartDefinition> Parts => _catalog.Parts;
 
-        public SafeDirectoryCatalog(string directory)
+        public SafeDirectoryCatalog(string directory, Func<Type,bool> typeFilter = null)
         {
             _dirInfo = new DirectoryInfo(directory);
             _catalog = new AggregateCatalog();
@@ -25,16 +26,16 @@ namespace NuPlug
             {
                 try
                 {
-                    var catalog = new SafeAssemblyCatalog(file.FullName);
+                    var catalog = new SafeAssemblyCatalog(file.FullName, typeFilter);
 
                     //Force MEF to load the plugin and figure out if there are any exports
                     // good assemblies will not throw the RTLE exception and can be added to the catalog
                     if (catalog.Parts.ToList().Count > 0)
                         _catalog.Catalogs.Add(catalog);
                 }
-                catch (Exception ex)
+                catch (ReflectionTypeLoadException rex)
                 {
-                    Trace.TraceWarning($"Could not load '{file.FullName}': {ex}");
+                    Trace.TraceWarning($"Could not load '{file.FullName}': {rex}");
                 }
             }
         }

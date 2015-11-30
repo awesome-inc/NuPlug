@@ -84,10 +84,11 @@
     <Compile Include="PackageRepositories_Should.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeAssemblyCatalog.cs" />
+    <Compile Include="SafeAssemblyCatalog_Should.cs" />
     <Compile Include="SafeDirectoryCatalog.cs" />
+    <Compile Include="SafeDirectoryCatalog_Should.cs" />
     <Compile Include="TraceLogger.cs" />
     <Compile Include="TraceLogger_Should.cs" />
-    <Compile Include="TypeLoadExtensions.cs" />
     <Compile Include="VersionHelper_Should.cs" />
     <Compile Include="VersionHelper.cs" />
   </ItemGroup>

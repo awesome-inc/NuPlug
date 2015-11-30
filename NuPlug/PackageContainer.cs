@@ -13,10 +13,12 @@ namespace NuPlug
         , IDisposable
         where TItem : class
     {
-        private readonly IResolveAssembly _assemblyResolver;
         public event EventHandler Updated;
         private readonly AggregateCatalog _catalog = new AggregateCatalog();
         private readonly CompositionContainer _container;
+        private readonly IResolveAssembly _assemblyResolver;
+
+        public Func<Type, bool> TypeFilter { get; set; } = type => true;
 
         // ReSharper disable once InconsistentNaming
         internal readonly CompositionBatch _batch = new CompositionBatch();
@@ -26,12 +28,11 @@ namespace NuPlug
             _assemblyResolver = assemblyResolver ?? new AssemblyResolver();
             _batch.AddPart(this);
             _container = new CompositionContainer(_catalog);
-            Items = new ObservableCollection<TItem>();
         }
 
         [ImportMany(AllowRecomposition = true)]
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
-        public IEnumerable<TItem> Items { get; private set; }
+        public IEnumerable<TItem> Items { get; private set; } = new ObservableCollection<TItem>();
 
         public virtual void Update()
         {
@@ -62,7 +63,7 @@ namespace NuPlug
         private void SyncCatalogs()
         {
             // remove obsolete
-            var dirsToRemove = _catalog.Catalogs.OfType<DirectoryCatalog>().Select(c => c.FullPath)
+            var dirsToRemove = _catalog.Catalogs.OfType<SafeDirectoryCatalog>().Select(c => c.FullPath)
                 .Except(_assemblyResolver.Directories);
             foreach (var directory in dirsToRemove)
                 RemoveCatalogsFor(directory);
@@ -76,7 +77,7 @@ namespace NuPlug
         {
             if (CatalogsMatching(libDir).Any())
                 return;
-            var catalog = new DirectoryCatalog(libDir);
+            var catalog = new SafeDirectoryCatalog(libDir, TypeFilter);
             _catalog.Catalogs.Add(catalog);
         }
 
@@ -86,11 +87,11 @@ namespace NuPlug
                 _catalog.Catalogs.Remove(catalog);
         }
 
-        private IEnumerable<DirectoryCatalog> CatalogsMatching(string directory)
+        private IEnumerable<SafeDirectoryCatalog> CatalogsMatching(string directory)
         {
             var trimmed = directory.TrimEnd(Path.DirectorySeparatorChar);
             return _catalog.Catalogs
-                .OfType<DirectoryCatalog>()
+                .OfType<SafeDirectoryCatalog>()
                 .Where(c => c.FullPath.StartsWith(trimmed))
                 .ToArray(); // NOTE: don't be lazy here to avoid 'collection modified'-errors
         }
