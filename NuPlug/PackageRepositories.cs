@@ -13,6 +13,7 @@ namespace NuPlug
                 ? CreatePackageRepository(packageSources.Single())
                 : new AggregateRepository(packageSources.Select(CreatePackageRepository));
         }
+
         private static IPackageRepository CreatePackageRepository(string packageSource)
         {
             var safePackageSource = packageSource;

@@ -36,7 +36,7 @@
   before_build:
     - ps: gitversion /l console /output buildserver
   build_script:
-    - build.bat OneClickBuild\OneClickBuild.csproj /t:Package /v:m
+    - build.bat OneClickBuild\OneClickBuild.csproj /t:Test;Package /v:m
  # after_build:
  # - ps: >-
  #     $wc = New-Object 'System.Net.WebClient'

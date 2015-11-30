@@ -5,40 +5,55 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace NuPlug
 {
-#if DEBUG
-    [NEdifis.Attributes.TestedBy(typeof(PackageContainer_Should))]
-#endif
     public class PackageContainer<TItem>
         : IPackageContainer<TItem>
         , IDisposable
         where TItem : class
     {
-        private readonly IResolveAssembly _assemblyResolver;
-        public event EventHandler Updated;
         private readonly AggregateCatalog _catalog = new AggregateCatalog();
         private readonly CompositionContainer _container;
+        private readonly IResolveAssembly _assemblyResolver;
+        private Func<Type, bool> _typeFilter = type => IsPublicImplementationOf(type);
 
-        // ReSharper disable once InconsistentNaming
-        internal readonly CompositionBatch _batch = new CompositionBatch();
+        public event EventHandler Updated;
+        public CompositionBatch Batch { get; } = new CompositionBatch();
+
+        public Func<Type, bool> TypeFilter
+        {
+            get { return _typeFilter; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException(nameof(value), $"'{nameof(TypeFilter)}' must not be null.");
+                _typeFilter = value;
+            }
+        }
+
+        public ReflectionContext Conventions { get; set; }
+
+        private static bool IsPublicImplementationOf(Type type)
+        {
+            return type.IsPublic && type.IsClass && !type.IsAbstract && typeof(TItem).IsAssignableFrom(type);
+        }
 
         public PackageContainer(IResolveAssembly assemblyResolver = null)
         {
             _assemblyResolver = assemblyResolver ?? new AssemblyResolver();
-            _batch.AddPart(this);
+            Batch.AddPart(this);
             _container = new CompositionContainer(_catalog);
-            Items = new ObservableCollection<TItem>();
         }
 
         [ImportMany(AllowRecomposition = true)]
-        public IEnumerable<TItem> Items { get; private set; }
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
+        public IEnumerable<TItem> Items { get; private set; } = new ObservableCollection<TItem>();
 
         public virtual void Update()
         {
             SyncCatalogs();
-            _container.Compose(_batch);
+            _container.Compose(Batch);
             Updated?.Invoke(this, EventArgs.Empty);
         }
 
@@ -64,7 +79,7 @@ namespace NuPlug
         private void SyncCatalogs()
         {
             // remove obsolete
-            var dirsToRemove = _catalog.Catalogs.OfType<DirectoryCatalog>().Select(c => c.FullPath)
+            var dirsToRemove = _catalog.Catalogs.OfType<SafeDirectoryCatalog>().Select(c => c.FullPath)
                 .Except(_assemblyResolver.Directories);
             foreach (var directory in dirsToRemove)
                 RemoveCatalogsFor(directory);
@@ -78,7 +93,8 @@ namespace NuPlug
         {
             if (CatalogsMatching(libDir).Any())
                 return;
-            _catalog.Catalogs.Add(new DirectoryCatalog(libDir));
+            var catalog = new SafeDirectoryCatalog(libDir, TypeFilter, Conventions);
+            _catalog.Catalogs.Add(catalog);
         }
 
         private void RemoveCatalogsFor(string directory)
@@ -87,11 +103,11 @@ namespace NuPlug
                 _catalog.Catalogs.Remove(catalog);
         }
 
-        private IEnumerable<DirectoryCatalog> CatalogsMatching(string directory)
+        private IEnumerable<SafeDirectoryCatalog> CatalogsMatching(string directory)
         {
             var trimmed = directory.TrimEnd(Path.DirectorySeparatorChar);
             return _catalog.Catalogs
-                .OfType<DirectoryCatalog>()
+                .OfType<SafeDirectoryCatalog>()
                 .Where(c => c.FullPath.StartsWith(trimmed))
                 .ToArray(); // NOTE: don't be lazy here to avoid 'collection modified'-errors
         }

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Test" DependsOnTargets="Build">
+    <Message Text="Skipping 'Tests'" />
+  </Target>
+  <Target Name="Coverage" DependsOnTargets="Build">
+    <Message Text="Skipping 'Coverage'" />
+  </Target>
+  <Target Name="CoverageReport" DependsOnTargets="Coverage">
+    <Message Text="Skipping 'CoverageReport'" />
+  </Target>
+  <Target Name="Deploy" DependsOnTargets="Build;Package;">
+    <Message Text="Skipping 'Deploy'" />
+  </Target>
+
+  <PropertyGroup>
+    <UseLocalPackages Condition="'$(Configuration)' == 'Debug' And $(RootNamespace.EndsWith('Plugin')) And '$(NCrunch)' != '1'">True</UseLocalPackages>
+  </PropertyGroup>
+
+  <Target Name="CopyLocalPackage" DependsOnTargets="Package" AfterTargets="Build" Condition="'$(UseLocalPackages)' == 'True' " >
+    <ItemGroup>
+      <Packages Include="$(ProjectDir)\*.nupkg"/>
+    </ItemGroup>
+    <Message Text="Copying Package '$(ProjectName)' to output ..." Importance="High" Condition="'@(Packages->Count())' &gt; 0"/>
+    <Copy SourceFiles="@(Packages)"
+          DestinationFolder="$(SolutionDir)Samples\feed\"
+          SkipUnchangedFiles="True"
+          Condition="'@(Packages->Count())' &gt; 0"/>
+  </Target>
+
+</Project>

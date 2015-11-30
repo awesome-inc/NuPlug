@@ -20,53 +20,98 @@ First, install [NuPlug](https://github.com/awesome-inc/NuPlug) to your applicati
 
 Then in the startup part, create a NuGet Package Manager. Here is an example snippet from the `ConsoleSample` application:
 
-    var packageSource = "https://mynugetfeed/"; // UNC share, folder, ... 
-    var feed = PackageRepositoryFactory.Default.CreateRepository(packageSource);
+	var packageSource = "https://mynugetfeed/"; // UNC share, folder, ... 
+	var feed = PackageRepositoryFactory.Default.CreateRepository(packageSource);
 	var packageManager = new PackageManager(feed, "plugins") { Logger = new TraceLogger() };
 
 This will download NuGet packages from the specified package source to the output directory `plugins`.
 
 Next, you need to specify which plugin packages to load. The most common way is to use a `packages.config` Xml file, e.g. 
 
-    var packagesConfig = new XDocument(
-        new XElement("packages",
-            new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", "0.1.5.0"))
-        ));
+	var packagesConfig = new XDocument(
+		new XElement("packages",
+			new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", version))
+		));
 
 Then install your plugin packages by
 
-    packageManager.InstallPackages(packagesConfig);
+	packageManager.InstallPackages(packagesConfig);
 
 	// When plugins update, be sure to remove previous versions 
-    packageManager.RemoveDuplicates();
+	packageManager.RemoveDuplicates();
 
 Finally, load the installed packages using `NuGetPackageContainer<T>` typed to your plugin interface. The console sample uses [AutoFac modules](http://docs.autofac.org/en/latest/configuration/modules.html): 
 
-    var modulePlugins = new NugetPackageContainer<IModule>(packageManager);
-    modulePlugins.Update();
+	var modulePlugins = new NuGetPackageContainer<IModule>(packageManager);
+	modulePlugins.Update();
 
-    var builder = new ContainerBuilder();
-    
+	var builder = new ContainerBuilder();
+	
 	foreach (var module in modulePlugins.Items)
-        builder.RegisterModule(module);
+		builder.RegisterModule(module);
 
-    var container = builder.Build();
+	var container = builder.Build();
 
 ### Plugin
 
 For the plugin part, you need to [export](https://msdn.microsoft.com/en-us/library/dd460648(v=vs.110).aspx#imports_and_exports_with_attributes) your implementation as the specified plugin contract interface. The sample application specified `IModule` as contract, so for the `SamplePlugin`
 
 	[Export(typeof(IModule))]
-    public class MyPluginModule : Module
-    {
-        protected override void Load(ContainerBuilder builder)
-        {
-            Trace.TraceInformation("Load: " + GetType().Name);
-            base.Load(builder);
-        }
-    }
+	public class MyPluginModule : Module
+	{
+		protected override void Load(ContainerBuilder builder)
+		{
+			Trace.TraceInformation("Load: " + GetType().Name);
+			base.Load(builder);
+		}
+	}
 
 The [build a NuGet package](https://docs.nuget.org/create/creating-and-publishing-a-package) of your plugin project, push it to your feed and you are set.
+
+#### Controlling type discovery from plugins
+
+You can filter the types for MEF to discover by using the `TypeFilter` property of `PackageContainer<TItem>`. By default, the package container only discovers public implementations of `TItem`, i.e.
+
+	TypeFilter = type =>
+		type.IsPublic && type.IsClass && !type.IsAbstract && typeof(TItem).IsAssignableFrom(type);
+
+This assumes that MEF does not need to resolve or compose any dependencies to instantiate the requested plugins.
+Note that in the provided examples we use [AutoFac](http://autofac.org/) for dependency injection, not MEF.
+
+#### Register plugin dependencies (MEF)
+
+In case your plugins need dependencies, you can add these to the package container's [CompositionBatch](https://msdn.microsoft.com/en-us/library/system.componentmodel.composition.hosting.compositionbatch(v=vs.110).aspx). Here is an example
+
+    [Export(typeof(IPlugin)
+    public class MyPlugin : IPlugin
+    {
+        public MyClass(IPluginDependency dependency) { ... }
+    }
+
+Then setup the package container like this
+
+    var packageContainer = new PackageContainer<IPlugin>();
+    // add service provider to satisfy plugin constructors
+	packageContainer.AddExportedValue(_serviceProvider);
+    ...
+    if (!packageContainer.Items.Any())
+    	packageContainer.Update();
+
+#### Using MEF conventions
+
+You can even use MEF conventions by setting the `Conventions` property like this
+
+    var conventions = new RegistrationBuilder();
+    conventions.ForTypesDerivedFrom<IDisposable>()
+        .ExportInterfaces();
+
+    packageContainer.Conventions = conventions;
+    ...
+    if (!packageContainer.Items.Any())
+    	packageContainer.Update();
+
+Note that you use conventions only to select exports but not to *hide* types like with [PartNonDiscoverableAttribute](https://msdn.microsoft.com/en-us/library/system.componentmodel.composition.partnotdiscoverableattribute(v=vs.110).aspx). This is why we added the 
+`TypeFilter` property. 
 
 ## Where to go from here?
 
@@ -75,38 +120,43 @@ Some hints getting up to speed in production with NuPlug
 ### 1. Automate packaging
 To get up to speed you should automate as much of the manual tasks as possible and make it part of your build process. For instance, we do NuGet packaging using [OneClickBuild](https://github.com/awesome-inc/OneClickBuild)).
 
-### 2. Cutting corners in `DEBUG`
+### 2. Speeding up development cycles for `DEBUG`
 During hot development, short feedback cycles are king. Note that, decoupling your code using plugins is cool but is likely to increase your development cycles unless you automate building and publishing the plugins within the standard Visual Studio build. To move fast, we totally skip NuGet packaging during `DEBUG` and just load the plugin assemblies from a directory. For this to work, you need two things
 
-1. Have an `AfterBuild` target to copy your modules output to this directory. For instance, we include a `Module.targets` containing
+1. Have an `AfterBuild` target to copy your modules output to this directory. For instance, we include a [Sample.targets](Samples\Sample.targets) containing a step to auto-copy the build plugin package to the local feed directory 
 
-		<Target Name="CopyModuleLocal" AfterTargets="Build" 
-             Condition="'$(Configuration)'=='Debug' And '$(NCrunch)' != '1'">
-		  <ItemGroup>
-		    <ModuleBinaries Include="$(OutDir)\**\*.*"/>
-		  </ItemGroup>
-		  <Message Text="Copying Module '$(ProjectName)' to output ..." Importance="High" />
-		  <Copy SourceFiles="@(ModuleBinaries)" 
-		    DestinationFolder="$(SolutionDir)Modules\_output\$(ProjectName)\%(RecursiveDir)"
-		    SkipUnchangedFiles="True"/>
-		</Target>
+		<PropertyGroup>
+		    <UseLocalPackages Condition="'$(Configuration)' == 'Debug' And $(RootNamespace.EndsWith('Plugin')) And '$(NCrunch)' != '1'">True</UseLocalPackages>
+		  </PropertyGroup>
+		
+		  <Target Name="CopyLocalPackage" DependsOnTargets="Package" AfterTargets="Build" Condition="'$(UseLocalPackages)' == 'True' " >
+		    <ItemGroup>
+		      <Packages Include="$(ProjectDir)\*.nupkg"/>
+		    </ItemGroup>
+		    <Message Text="Copying Package '$(ProjectName)' to output ..." Importance="High" Condition="'@(Packages->Count())' &gt; 0"/>
+		    <Copy SourceFiles="@(Packages)"
+		          DestinationFolder="$(SolutionDir)Samples\feed\"
+		          SkipUnchangedFiles="True"
+		          Condition="'@(Packages->Count())' &gt; 0"/>
+		  </Target>
+		
 	
 2. Have a factory for the `IPackageContainer<T>` deciding which implementation to use at runtime. For `DEBUG` just use the `PackageContainer<T>` base class like this:
 
 		private static IPackageContainer<TItem> CreateDirectoryContainer(string localPath)
 		{
-		    var packageContainer = new PackageContainer<TItem>();
-		    if (Directory.Exists(localPath))
-		    {
-		        foreach (var directory in Directory.GetDirectories(localPath))
-		            packageContainer.AddDirectory(directory);
-		    }
-		    else
-		    {
-		        Trace.TraceWarning("Packages directory \"{0}\" does not exist", localPath);
-		    }
-		    return packageContainer;
+			var packageContainer = new PackageContainer<TItem>();
+			if (Directory.Exists(localPath))
+			{
+				foreach (var directory in Directory.GetDirectories(localPath))
+					packageContainer.AddDirectory(directory);
+			}
+			else
+			{
+				Trace.TraceWarning("Packages directory \"{0}\" does not exist", localPath);
+			}
+			return packageContainer;
 		}
 
-with `localPath ~= ..\..\..\Modules\_output\`. 
+with `localPath ~= ..\..\..\feed\`. 
  

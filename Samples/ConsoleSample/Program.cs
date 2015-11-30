@@ -50,16 +50,10 @@ namespace ConsoleSample
         {
             // ReSharper disable once ConvertToConstant.Local
             var repo = PackageRepositories.Create(
-                @"..\..\..\feed" // see 'Plugin.targets'
-                // , "http://localhost:8888/nuget/feed" // cf.: https://github.com/mkoertgen/hello.nuget.server
+                @"..\..\..\feed" // see 'Sample.targets'
                 , "https://packages.nuget.org/api/v2");
 
             var packageManager = new PackageManager(repo, "plugins") {Logger = new TraceLogger()};
-
-            //packageManager.PackageInstalling += (sender, args) => Trace.TraceInformation("Adding package '{0} {1}' to '{2}'", args.Package.Id, args.Package.Version, args.InstallPath);
-            //packageManager.PackageInstalled += (sender, args) => Trace.TraceInformation("Successfully installed '{0} {1}'", args.Package.Id, args.Package.Version);
-            //packageManager.PackageUninstalling += (sender, args) => Trace.TraceInformation("Removing package '{0} {1}' to '{2}'", args.Package.Id, args.Package.Version, args.InstallPath);
-            //packageManager.PackageUninstalled += (sender, args) => Trace.TraceInformation("Successfully uninstalled '{0} {1}'", args.Package.Id, args.Package.Version);
 
             var version = Assembly.GetEntryAssembly().GetName().Version.ToString();
 #if !NCRUNCH
@@ -72,21 +66,19 @@ namespace ConsoleSample
                     ));
 
             Trace.TraceInformation("Installing packages...");
-            packageManager.InstallPackages(packagesConfig, false);
+            packageManager.InstallPackages(packagesConfig, false, true);
 
             Trace.TraceInformation("Removing duplicates...");
             packageManager.RemoveDuplicates();
 
-            return new NugetPackageContainer<IModule>(packageManager);
+            return new NuGetPackageContainer<IModule>(packageManager);
         }
 
         private static string FormatException(Exception ex)
         {
             var rtlEx = ex as ReflectionTypeLoadException;
             var e = rtlEx?.LoaderExceptions.FirstOrDefault();
-            if (e != null) return e.ToString();
-
-            return ex.ToString();
+            return e?.ToString() ?? ex.ToString();
         }
     }
 }
