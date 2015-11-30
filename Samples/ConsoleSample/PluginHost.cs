@@ -13,7 +13,7 @@ namespace ConsoleSample
             Name = assemblyName.Name;
             Version = assemblyName.Version.ToString();
 #if !NCRUNCH
-            Version = GitVersionInformation.FullSemVer;
+            Version = GitVersionInformation.InformationalVersion;
 #endif
         }
 
