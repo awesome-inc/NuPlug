@@ -18,6 +18,7 @@ namespace NuPlug
 
         public SafeDirectoryCatalog(string directory, Func<Type,bool> typeFilter = null, ReflectionContext reflectionContext = null)
         {
+            // cf.: http://stackoverflow.com/a/4475117/2592915
             _dirInfo = new DirectoryInfo(directory);
             _catalog = new AggregateCatalog();
 
@@ -33,9 +34,9 @@ namespace NuPlug
                     if (catalog.Parts.ToList().Count > 0)
                         _catalog.Catalogs.Add(catalog);
                 }
-                catch (ReflectionTypeLoadException rex)
+                catch (Exception ex) when (ex is ReflectionTypeLoadException || ex is BadImageFormatException)
                 {
-                    Trace.TraceWarning($"Could not load '{file.FullName}': {rex}");
+                    Trace.WriteLine($"Could not load '{file.FullName}': {ex}");
                 }
             }
         }
