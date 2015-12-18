@@ -19,9 +19,9 @@ namespace NuPlug
 
         public FrameworkName TargetFramework { get; set; } = VersionHelper.GetTargetFramework();
 
-        //public override void InstallPackage(IPackage package, bool ignoreDependencies, bool allowPrereleaseVersions)
-        //{
-        //    InstallPackage(package, TargetFramework, ignoreDependencies, allowPrereleaseVersions);
-        //}
+        public override void InstallPackage(IPackage package, bool ignoreDependencies, bool allowPrereleaseVersions)
+        {
+            InstallPackage(package, TargetFramework, ignoreDependencies, allowPrereleaseVersions);
+        }
     }
 }
