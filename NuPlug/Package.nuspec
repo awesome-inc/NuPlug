@@ -18,7 +18,7 @@
       <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework="" />
     </frameworkAssemblies>
     <dependencies>
-      <dependency id="NuGet.Core" version="2.9.0" />
+      <dependency id="NuGet.Core" version="2.10.1" />
     </dependencies>
   </metadata>
   <files>
