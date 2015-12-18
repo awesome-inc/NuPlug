@@ -77,6 +77,8 @@
     <Compile Include="MessageLevelExtensions_Should.cs" />
     <Compile Include="NuGetPackageContainer_Should.cs" />
     <Compile Include="NuPlugConventions.cs" />
+    <Compile Include="NuPlugPackageManager.cs" />
+    <Compile Include="NuPlugPackageManager_Should.cs" />
     <Compile Include="PackageContainer.cs" />
     <Compile Include="PackageContainer_Should.cs" />
     <Compile Include="NugetPackageContainer.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="SafeAssemblyCatalog_Should.cs" />
     <Compile Include="SafeDirectoryCatalog.cs" />
     <Compile Include="SafeDirectoryCatalog_Should.cs" />
+    <Compile Include="TestingHelper.cs" />
     <Compile Include="TraceLogger.cs" />
     <Compile Include="TraceLogger_Should.cs" />
     <Compile Include="VersionHelper_Should.cs" />

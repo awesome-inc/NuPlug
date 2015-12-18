@@ -46,9 +46,9 @@ namespace NuPlug
 
             var packages = new[]
             {
-                CreatePackage("foo", "0.9.0")
-                , CreatePackage("foo", "0.9.1")
-                , CreatePackage("foo", "1.0.0")
+                "foo".CreatePackage("0.9.0")
+                , "foo".CreatePackage("0.9.1")
+                , "foo".CreatePackage("1.0.0")
             };
 
             packageManager.LocalRepository.GetPackages().Returns(packages.AsQueryable());
@@ -56,14 +56,6 @@ namespace NuPlug
             packageManager.RemoveDuplicates();
 
             packageManager.Received(2).UninstallPackage(Arg.Is<IPackage>(p => p.Version.Version.Major < 1), false, false);
-        }
-
-        private static IPackage CreatePackage(string id, string version)
-        {
-            var package = Substitute.For<IPackage>();
-            package.Id.Returns(id);
-            package.Version.Returns(SemanticVersion.Parse(version));
-            return package;
         }
     }
 }
