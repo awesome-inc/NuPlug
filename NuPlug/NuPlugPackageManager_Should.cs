@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
 using FluentAssertions;
@@ -14,6 +15,16 @@ namespace NuPlug
     // ReSharper disable once InconsistentNaming
     internal class NuPlugPackageManager_Should
     {
+        [Test]
+        public void Override_all_base_ctors()
+        {
+            // ReSharper disable ObjectCreationAsStatement
+            0.Invoking(x => new NuPlugPackageManager(null, null, null,null)).ShouldThrow<ArgumentNullException>();
+            1.Invoking(x => new NuPlugPackageManager(null,null,null)).ShouldThrow<ArgumentNullException>();
+            2.Invoking(x => new NuPlugPackageManager(null, string.Empty)).ShouldThrow<ArgumentException>();
+            // ReSharper restore ObjectCreationAsStatement
+        }
+
         [Test]
         [Issue("#6", Title = "Installing packages should respect the requested target framework")]
         [TestCase("net452")]
