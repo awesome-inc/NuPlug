@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace NuPlug
 {
-    internal class AssemblyResolver : IResolveAssembly
+    public class AssemblyResolver : IResolveAssembly
     {
         private bool _isDisposed;
         public IList<string> Directories { get; }
@@ -75,7 +75,7 @@ namespace NuPlug
             return assembly;
         }
 
-        internal static bool Matching(AssemblyName assemblyName, string name, Version version)
+        private static bool Matching(AssemblyName assemblyName, string name, Version version)
         {
             return assemblyName.Name == name && (version == null || version >= assemblyName.Version);
         }
