@@ -12,6 +12,11 @@
     <UseNUnit3>true</UseNUnit3>
     <NUnitResultFormat>nunit3</NUnitResultFormat>
   </PropertyGroup>
+  
+	<!-- ## Allowing local deployment (non build server) -->
+	<PropertyGroup>
+		<DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
+	</PropertyGroup>
 
   <!-- ## Automatically import sample/plugin targets -->
   <Import Project="$(SolutionDir)\Samples\Sample.targets"
