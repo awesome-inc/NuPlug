@@ -25,8 +25,8 @@ Then in the startup part, create a package manager. Here is an example snippet f
 	var packageManager = new NuPlugPackageManager(feed, "plugins") 
       { 
          Logger = new TraceLogger(),
-         TargetFramework = VersionHelper.GetTargetFramework
-      }
+         TargetFramework = VersionHelper.GetTargetFramework()
+      };
 
 This will download NuGet packages from the specified package source to the output directory `plugins`.
 
@@ -119,13 +119,21 @@ Note that you use conventions only to select exports but not to *hide* types lik
 
 ## Selecting the target framework
 
-There is good chance that your plugins themselves have runtime dependencies which NuGet can address.
+There is good chance that your plugins themselves have runtime dependencies. This is called transitive dependencies and resolving these dependencies is what package managers like NuGet are really made for.
+
 However, with more and more packages becoming cross-platform, you should only need to install the dependencies 
-needed for the runtime target framework. 
+needed for the runtime target framework of your application. 
 
 This is especially true, when you are hosting a NuGet feed for your plugins yourself.
-...
- 
+As of the current [NuGet.Core.2.10.1](https://www.nuget.org/packages/NuGet.Core/2.10.1), the PackageManager does [not consider the target framework](https://github.com/NuGet/NuGet2/blob/2.10.1/src/Core/PackageManager.cs#L128) specified in the `packages.config`.
+
+We think that this will be addressed soon by the Nuget team. Meanwhile you should use `NuPlugPackageManager` like in the example specified above, i.e.
+  
+	var packageManager = new NuPlugPackageManager(feed, "plugins") 
+      { 
+         Logger = new TraceLogger(),
+         TargetFramework = VersionHelper.GetTargetFramework()
+      }; 
 
 ## Where to go from here?
 
