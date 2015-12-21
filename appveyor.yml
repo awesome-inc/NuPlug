@@ -37,7 +37,8 @@
     - ps: gitversion /l console /output buildserver
   build_script:
     - build.bat NuPlug\NuPlug.csproj /t:Test;Package /v:m
- # after_build:
+  after_build:
+    - appveyor PushArtifact NuPlug\NuPlug.%APPVEYOR_BUILD_VERSION%.nupkg
  # - ps: >-
  #     $wc = New-Object 'System.Net.WebClient'
  #   

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.Registration;
+using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NEdifis.Attributes;
@@ -79,6 +81,54 @@ namespace NuPlug
                 sut.Conventions = conventions;
                 sut.Conventions.Should().Be(conventions);
             }
+        }
+
+        [Test]
+        public void Add_and_remove_directories()
+        {
+            var dir = GetRandomDirectory();
+            Directory.CreateDirectory(dir);
+
+            try
+            {
+                var dirs = new List<string> { dir };
+
+                var assemblyResolver = Substitute.For<IResolveAssembly>();
+                assemblyResolver.Directories.Returns(dirs);
+
+
+                using (var sut = new PackageContainer<IDisposable>(assemblyResolver))
+                {
+                    sut.Update();
+                    // ReSharper disable once NotAccessedVariable
+                    var dummy = assemblyResolver.Received(2).Directories;
+
+                    sut.Update();
+                    // ReSharper disable once RedundantAssignment
+                    dummy = assemblyResolver.Received(4).Directories;
+
+                    var otherDir = GetRandomDirectory();
+                    sut.AddDirectory(otherDir);
+                    dirs.Should().BeEquivalentTo(dir, otherDir);
+
+                    sut.AddDirectory(dir);
+                    dirs.Should().BeEquivalentTo(dir, otherDir);
+
+                    sut.RemoveDirectory(dir);
+                    dirs.Should().BeEquivalentTo(otherDir);
+
+                    sut.RemoveDirectory(otherDir);
+                    dirs.Should().BeEmpty();
+                }
+            }
+            finally { Directory.Delete(dir); }
+        }
+
+        private static string GetRandomDirectory()
+        {
+            var dir = Path.GetRandomFileName();
+            File.Delete(dir);
+            return dir;
         }
     }
 }

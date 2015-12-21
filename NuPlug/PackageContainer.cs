@@ -63,14 +63,14 @@ namespace NuPlug
             _assemblyResolver.Dispose();
         }
 
-        protected void AddDirectory(string libDir)
+        protected internal void AddDirectory(string libDir)
         {
             if (_assemblyResolver.Directories.Contains(libDir))
                 return;
             _assemblyResolver.Directories.Add(libDir);
         }
 
-        protected void RemoveDirectory(string libDir)
+        protected internal void RemoveDirectory(string libDir)
         {
             if (_assemblyResolver.Directories.Contains(libDir))
                 _assemblyResolver.Directories.Remove(libDir);

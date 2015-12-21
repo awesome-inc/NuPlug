@@ -18,11 +18,15 @@ First, install [NuPlug](https://github.com/awesome-inc/NuPlug) to your applicati
 
 	Install-Package NuPlug
 
-Then in the startup part, create a NuGet Package Manager. Here is an example snippet from the `ConsoleSample` application:
+Then in the startup part, create a package manager. Here is an example snippet from the `ConsoleSample` application:
 
 	var packageSource = "https://mynugetfeed/"; // UNC share, folder, ... 
 	var feed = PackageRepositoryFactory.Default.CreateRepository(packageSource);
-	var packageManager = new PackageManager(feed, "plugins") { Logger = new TraceLogger() };
+	var packageManager = new NuPlugPackageManager(feed, "plugins") 
+      { 
+         Logger = new TraceLogger(),
+         TargetFramework = VersionHelper.GetTargetFramework()
+      };
 
 This will download NuGet packages from the specified package source to the output directory `plugins`.
 
@@ -111,7 +115,25 @@ You can even use MEF conventions by setting the `Conventions` property like this
     	packageContainer.Update();
 
 Note that you use conventions only to select exports but not to *hide* types like with [PartNonDiscoverableAttribute](https://msdn.microsoft.com/en-us/library/system.componentmodel.composition.partnotdiscoverableattribute(v=vs.110).aspx). This is why we added the 
-`TypeFilter` property. 
+`TypeFilter` property.
+
+## Selecting the target framework
+
+There is good chance that your plugins themselves have runtime dependencies. This is called transitive dependencies and resolving these dependencies is what package managers like NuGet are really made for.
+
+However, with more and more packages becoming cross-platform, you should only need to install the dependencies 
+needed for the runtime target framework of your application. 
+
+This is especially true, when you are hosting a NuGet feed for your plugins yourself.
+As of the current [NuGet.Core.2.10.1](https://www.nuget.org/packages/NuGet.Core/2.10.1), the PackageManager does [not consider the target framework](https://github.com/NuGet/NuGet2/blob/2.10.1/src/Core/PackageManager.cs#L128) specified in the `packages.config`.
+
+We think that this will be addressed soon by the Nuget team. Meanwhile you should use `NuPlugPackageManager` like in the example specified above, i.e.
+  
+	var packageManager = new NuPlugPackageManager(feed, "plugins") 
+      { 
+         Logger = new TraceLogger(),
+         TargetFramework = VersionHelper.GetTargetFramework()
+      }; 
 
 ## Where to go from here?
 
