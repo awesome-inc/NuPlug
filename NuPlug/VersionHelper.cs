@@ -9,6 +9,14 @@ namespace NuPlug
 {
     public static class VersionHelper
     {
+        public static FrameworkName GetTargetFramework(Assembly assembly = null)
+        {
+            var safeAssembly = assembly ?? (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly());
+            var a = safeAssembly.GetCustomAttributes(typeof(TargetFrameworkAttribute), false)
+                .OfType<TargetFrameworkAttribute>().FirstOrDefault();
+            return a != null ? new FrameworkName(a.FrameworkName) : null;
+        }
+
         internal static string BestMatch(this Version version, IEnumerable<string> folderNames)
         {
             return folderNames
@@ -16,14 +24,6 @@ namespace NuPlug
                 .FirstOrDefault();
         }
 
-
-        internal static FrameworkName GetTargetFramework(Assembly assembly = null)
-        {
-            var safeAssembly = assembly ?? (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly());
-            var a = safeAssembly.GetCustomAttributes(typeof(TargetFrameworkAttribute), false)
-                .OfType<TargetFrameworkAttribute>().FirstOrDefault();
-            return a != null ? new FrameworkName(a.FrameworkName) : null;
-        }
 
         private static double VersionDistance(Version a, Version b)
         {
