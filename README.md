@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/wl4qp6pr6067r7dl/branch/master?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug)
+[![Build status](https://ci.appveyor.com/api/projects/status/wl4qp6pr6067r7dl?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug)
 [![Nuget](https://img.shields.io/nuget/dt/nuplug.svg)](http://nuget.org/packages/nuplug)
 [![Nuget](https://img.shields.io/nuget/v/nuplug.svg)](http://nuget.org/packages/nuplug)
 [![Nuget](https://img.shields.io/nuget/vpre/nuplug.svg)](http://nuget.org/packages/nuplug)
