@@ -14,7 +14,7 @@
     apiKey:
       secure: lrwREUV4nO99AU0A6xVx/MNF0BaJc8A1B8dwEGMLqmYKGqD5E7PJ/IC9RHcle6pk
   before_build:
-    - ps: gitversion /l console /output buildserver
+    - gitversion /l console /output buildserver
     - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
   - build.bat NuPlug\NuPlug.csproj /t:Test;Deploy /v:m
@@ -29,6 +29,6 @@
   nuget:
     disable_publish_on_pr: true
   before_build:
-    - gitversion /l console /output buildserver > NUL
+    - gitversion /l console /output buildserver
   build_script:
     - build.bat NuPlug\NuPlug.csproj /t:Test;Package /v:m
