@@ -28,12 +28,7 @@
     patch: false
   nuget:
     disable_publish_on_pr: true
-  environment:
-    apiKey:
-      secure: nOI+DF6dG2DnZOaNxLKvfpP5RW8Mc6peyzCcnIIFndE=
-    NuGetSourceToDeploy: https://ci.appveyor.com/nuget/awesome-inc-build-y5l243ydeuam/api/v2/package
   before_build:
     - ps: gitversion /l console /output buildserver
-    - nuget setapikey %apiKey% -Source %NuGetSourceToDeploy% -Verbosity quiet
   build_script:
-    - build.bat NuPlug\NuPlug.csproj /t:Test;Deploy /v:m
+    - build.bat NuPlug\NuPlug.csproj /t:Test;Package /v:m
