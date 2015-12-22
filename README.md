@@ -1,4 +1,10 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/247pcwhcvr4177at/branch/master?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug) ![NuGet Version](https://img.shields.io/nuget/v/NuPlug.svg) ![NuGet Version](https://img.shields.io/nuget/dt/NuPlug.svg) [![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/issue)](http://issuestats.com/github/awesome-inc/NuPlug) [![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/pr)](http://issuestats.com/github/awesome-inc/NuPlug)
+[![Build status](https://ci.appveyor.com/api/projects/status/wl4qp6pr6067r7dl/branch/master?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug)
+[![Nuget](https://img.shields.io/nuget/dt/nuplug.svg)](http://nuget.org/packages/nuplug)
+[![Nuget](https://img.shields.io/nuget/v/nuplug.svg)](http://nuget.org/packages/nuplug)
+[![Nuget](https://img.shields.io/nuget/vpre/nuplug.svg)](http://nuget.org/packages/nuplug)
+[![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/issue)](http://issuestats.com/github/awesome-inc/NuPlug) 
+[![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/pr)](http://issuestats.com/github/awesome-inc/NuPlug)
+[![Coverage Status](https://coveralls.io/repos/awesome-inc/NuPlug/badge.svg?branch=develop&service=github)](https://coveralls.io/github/awesome-inc/NuPlug?branch=develop)
 
 # NuPlug
 
