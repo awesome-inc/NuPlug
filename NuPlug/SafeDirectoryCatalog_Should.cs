@@ -31,13 +31,20 @@ namespace NuPlug
         {
             var assembly = Assembly.GetExecutingAssembly();
             var dir = assembly.GetDirectory();
-            // without file filter we load exactly 1 assembly
+
+            // without file filter we load n assemblies
             using (var sut = new SafeDirectoryCatalog(dir))
+                sut.Catalog.Catalogs.Should().NotBeNullOrEmpty();
+
+            // exactly our assembly
+            var assemblyFileName = assembly.GetLocation();
+            using (var sut = new SafeDirectoryCatalog(dir, fileFilter: fileName => fileName.Equals(assemblyFileName, StringComparison.InvariantCultureIgnoreCase)))
             {
                 var catalog = sut.Catalog.Catalogs.OfType<SafeAssemblyCatalog>().Single();
                 catalog.Assembly.FullName.Should().Be(assembly.FullName);
             }
 
+            // no assembly
             using (var sut = new SafeDirectoryCatalog(dir, fileFilter: fileName => false))
                 sut.Catalog.Catalogs.Should().BeEmpty("file filter cannot match.");
         }
