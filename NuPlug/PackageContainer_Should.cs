@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.Registration;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using NEdifis.Attributes;
 using NSubstitute;
@@ -123,6 +124,20 @@ namespace NuPlug
             }
             finally { Directory.Delete(dir); }
         }
+
+        [Test]
+        [Issue("#7", Title = "Redirect & Performance: Should support assembly filter, https://github.com/awesome-inc/NuPlug/issues/7")]
+        public void Support_customized_file_filters()
+        {
+            var regex = new Regex(@"MyApp\.Module\.\w*.dll");
+            using (var sut = new PackageContainer<string> { FileFilter = regex.IsMatch })
+            {
+                sut.FileFilter(@"c:\some\path\packages\MyApp.Module.1.2.3\lib\net45\MyApp.Module.FooBar.dll").Should().BeTrue();
+                sut.FileFilter("MyApp.NoModule.dll").Should().BeFalse();
+                sut.Invoking(x => x.TypeFilter = null).ShouldThrow<ArgumentNullException>("null not allowed");
+            }
+        }
+
 
         private static string GetRandomDirectory()
         {

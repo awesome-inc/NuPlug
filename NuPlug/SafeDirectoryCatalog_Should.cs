@@ -26,6 +26,23 @@ namespace NuPlug
         }
 
         [Test]
+        [Issue("#7", Title = "Redirect & Performance: Should support assembly filter, https://github.com/awesome-inc/NuPlug/issues/7")]
+        public void Use_file_filter()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var dir = assembly.GetDirectory();
+            // without file filter we load exactly 1 assembly
+            using (var sut = new SafeDirectoryCatalog(dir))
+            {
+                var catalog = sut.Catalog.Catalogs.OfType<SafeAssemblyCatalog>().Single();
+                catalog.Assembly.FullName.Should().Be(assembly.FullName);
+            }
+
+            using (var sut = new SafeDirectoryCatalog(dir, fileFilter: fileName => false))
+                sut.Catalog.Catalogs.Should().BeEmpty("file filter cannot match.");
+        }
+
+        [Test]
         public void Catch_assembly_load_exceptions()
         {
             AssertCatch(new ReflectionTypeLoadException(new Type[] { }, new Exception[] { }));

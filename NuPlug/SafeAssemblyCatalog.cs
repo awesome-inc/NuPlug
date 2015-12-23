@@ -11,7 +11,7 @@ namespace NuPlug
 {
     internal class SafeAssemblyCatalog : ComposablePartCatalog
     {
-        private readonly Assembly _assembly;
+        internal readonly Assembly Assembly;
         private readonly Func<Type, bool> _typeFilter;
         private readonly ReflectionContext _reflectionContext;
 
@@ -26,7 +26,7 @@ namespace NuPlug
         {
             if (assembly == null) throw new ArgumentNullException(nameof(assembly));
             if (typeFilter == null) throw new ArgumentNullException(nameof(typeFilter));
-            _assembly = assembly;
+            Assembly = assembly;
             _typeFilter = typeFilter;
             _reflectionContext = reflectionContext;
         }
@@ -62,7 +62,7 @@ namespace NuPlug
 
         private IEnumerable<Type> SelectTypes()
         {
-            return GetLoadableTypes(_assembly)
+            return GetLoadableTypes(Assembly)
                 .Where(_typeFilter);
         }
 

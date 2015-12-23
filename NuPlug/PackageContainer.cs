@@ -18,6 +18,7 @@ namespace NuPlug
         private readonly CompositionContainer _container;
         private readonly IResolveAssembly _assemblyResolver;
         private Func<Type, bool> _typeFilter = type => IsPublicImplementationOf(type);
+        private Func<string, bool> _fileFilter = fileName => fileName.EndsWith(".dll"); 
 
         public event EventHandler Updated;
         public CompositionBatch Batch { get; } = new CompositionBatch();
@@ -31,6 +32,17 @@ namespace NuPlug
                 _typeFilter = value;
             }
         }
+
+        public Func<string, bool> FileFilter
+        {
+            get { return _fileFilter; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException(nameof(value), $"'{nameof(FileFilter)}' must not be null.");
+                _fileFilter = value;
+            }
+        }
+
 
         public ReflectionContext Conventions { get; set; }
 
@@ -93,7 +105,7 @@ namespace NuPlug
         {
             if (CatalogsMatching(libDir).Any())
                 return;
-            var catalog = new SafeDirectoryCatalog(libDir, TypeFilter, Conventions);
+            var catalog = new SafeDirectoryCatalog(libDir, TypeFilter, Conventions, FileFilter);
             _catalog.Catalogs.Add(catalog);
         }
 
