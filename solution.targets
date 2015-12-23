@@ -17,6 +17,11 @@
 	<PropertyGroup>
 		<DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
 	</PropertyGroup>
+  
+	<!--## Specifying your repository token for coveralls.io -->
+	<PropertyGroup>
+		<CoverAllsToken>8OlxmeiJND5EIWIcAMzlnSdPGVTknTZBB</CoverAllsToken>
+	</PropertyGroup>
 
   <!-- ## Automatically import sample/plugin targets -->
   <Import Project="$(SolutionDir)\Samples\Sample.targets"
