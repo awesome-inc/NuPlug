@@ -10,19 +10,24 @@ namespace NuPlug
 {
     internal class SafeDirectoryCatalog : ComposablePartCatalog
     {
-        private readonly AggregateCatalog _catalog;
+        internal readonly AggregateCatalog Catalog;
         private readonly DirectoryInfo _dirInfo;
 
         public string FullPath => _dirInfo.FullName;
-        public override IQueryable<ComposablePartDefinition> Parts => _catalog.Parts;
+        public override IQueryable<ComposablePartDefinition> Parts => Catalog.Parts;
 
-        public SafeDirectoryCatalog(string directory, Func<Type,bool> typeFilter = null, ReflectionContext reflectionContext = null)
+        public SafeDirectoryCatalog(string directory, 
+            Func<Type,bool> typeFilter = null, 
+            ReflectionContext reflectionContext = null,
+            Func<string, bool> fileFilter = null)
         {
             // cf.: http://stackoverflow.com/a/4475117/2592915
             _dirInfo = new DirectoryInfo(directory);
-            _catalog = new AggregateCatalog();
+            Catalog = new AggregateCatalog();
 
-            var files = _dirInfo.EnumerateFiles("*.dll", SearchOption.AllDirectories);
+            var safeFileFilter = fileFilter ?? (fileName => true);
+            var files = _dirInfo.EnumerateFiles("*.dll", SearchOption.AllDirectories)
+                .Where(file => safeFileFilter(file.FullName));
             foreach (var file in files)
             {
                 try
@@ -32,7 +37,7 @@ namespace NuPlug
                     //Force MEF to load the plugin and figure out if there are any exports
                     // good assemblies will not throw the RTLE exception and can be added to the catalog
                     if (catalog.Parts.ToList().Count > 0)
-                        _catalog.Catalogs.Add(catalog);
+                        Catalog.Catalogs.Add(catalog);
                 }
                 catch (Exception ex) when (ex is ReflectionTypeLoadException || ex is BadImageFormatException)
                 {
@@ -44,7 +49,7 @@ namespace NuPlug
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            _catalog.Dispose();
+            Catalog.Dispose();
         }
     }
 }

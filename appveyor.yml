@@ -14,15 +14,10 @@
     apiKey:
       secure: lrwREUV4nO99AU0A6xVx/MNF0BaJc8A1B8dwEGMLqmYKGqD5E7PJ/IC9RHcle6pk
   before_build:
-    - ps: gitversion /l console /output buildserver
+    - gitversion /l console /output buildserver
     - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
-  - build.bat NuPlug\NuPlug.csproj /t:Test;Deploy /v:m
-#  after_build:
-#  - ps: >-
-#      $wc = New-Object 'System.Net.WebClient'
-#    
-#      $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\NuPlug.Tests.xml))
+  - build.bat NuPlug\NuPlug.csproj /t:CoverageUpload;Deploy /v:m
 
 # all other branches
 -
@@ -34,12 +29,6 @@
   nuget:
     disable_publish_on_pr: true
   before_build:
-    - ps: gitversion /l console /output buildserver
+    - gitversion /l console /output buildserver
   build_script:
-    - build.bat NuPlug\NuPlug.csproj /t:Test;Package /v:m
-  after_build:
-    - appveyor PushArtifact NuPlug\NuPlug.%APPVEYOR_BUILD_VERSION%.nupkg
- # - ps: >-
- #     $wc = New-Object 'System.Net.WebClient'
- #   
- #     $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\NuPlug.Tests.xml))
+    - build.bat NuPlug\NuPlug.csproj /t:CoverageUpload;Package /v:m

@@ -1,4 +1,10 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/247pcwhcvr4177at/branch/master?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug) ![NuGet Version](https://img.shields.io/nuget/v/NuPlug.svg) ![NuGet Version](https://img.shields.io/nuget/dt/NuPlug.svg) [![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/issue)](http://issuestats.com/github/awesome-inc/NuPlug) [![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/pr)](http://issuestats.com/github/awesome-inc/NuPlug)
+[![Build status](https://ci.appveyor.com/api/projects/status/wl4qp6pr6067r7dl?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug)
+[![Nuget](https://img.shields.io/nuget/dt/nuplug.svg)](http://nuget.org/packages/nuplug)
+[![Nuget](https://img.shields.io/nuget/v/nuplug.svg)](http://nuget.org/packages/nuplug)
+[![Nuget](https://img.shields.io/nuget/vpre/nuplug.svg)](http://nuget.org/packages/nuplug)
+[![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/issue)](http://issuestats.com/github/awesome-inc/NuPlug) 
+[![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/pr)](http://issuestats.com/github/awesome-inc/NuPlug)
+[![Coverage Status](https://coveralls.io/repos/awesome-inc/NuPlug/badge.svg?branch=develop&service=github)](https://coveralls.io/github/awesome-inc/NuPlug?branch=develop)
 
 # NuPlug
 
@@ -81,6 +87,17 @@ You can filter the types for MEF to discover by using the `TypeFilter` property 
 
 This assumes that MEF does not need to resolve or compose any dependencies to instantiate the requested plugins.
 Note that in the provided examples we use [AutoFac](http://autofac.org/) for dependency injection, not MEF.
+
+#### Controlling assembly discovery from NuGet packages
+
+As noted in [Issue #7](https://github.com/awesome-inc/NuPlug/issues/7) the MEF part may load an awfully large number of assemblies, especially when considering the full dependency tree. As this not only may cause large startup times (preventing just-in-time code loading) but may also bypass binding redirects of the main application.
+
+Since v0.4 we added optional support for filtering the assemblies to be scanned by MEF
+
+    var regex = new Regex("Plugin.dll$");
+    var packageContainer = new PackageContainer<string> { FileFilter = regex.IsMatch });
+
+Using the example above, the package container will only scan files with names matching the specified regular expression, in this case files ending with `Plugin.dll`.
 
 #### Register plugin dependencies (MEF)
 
