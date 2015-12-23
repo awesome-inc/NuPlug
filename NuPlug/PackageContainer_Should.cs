@@ -129,11 +129,11 @@ namespace NuPlug
         [Issue("#7", Title = "Redirect & Performance: Should support assembly filter, https://github.com/awesome-inc/NuPlug/issues/7")]
         public void Support_customized_file_filters()
         {
-            var regex = new Regex(@"MyApp\.Module\.\w*.dll");
+            var regex = new Regex("Plugin.dll$");
             using (var sut = new PackageContainer<string> { FileFilter = regex.IsMatch })
             {
-                sut.FileFilter(@"c:\some\path\packages\MyApp.Module.1.2.3\lib\net45\MyApp.Module.FooBar.dll").Should().BeTrue();
-                sut.FileFilter("MyApp.NoModule.dll").Should().BeFalse();
+                sut.FileFilter(@"c:\some\path\packages\RestPlugin.1.2.3\lib\net45\RestPlugin.dll").Should().BeTrue();
+                sut.FileFilter("Newtonsoft.Json.dll").Should().BeFalse();
                 sut.Invoking(x => x.TypeFilter = null).ShouldThrow<ArgumentNullException>("null not allowed");
             }
         }

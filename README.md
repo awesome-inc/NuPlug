@@ -88,6 +88,17 @@ You can filter the types for MEF to discover by using the `TypeFilter` property 
 This assumes that MEF does not need to resolve or compose any dependencies to instantiate the requested plugins.
 Note that in the provided examples we use [AutoFac](http://autofac.org/) for dependency injection, not MEF.
 
+#### Controlling assembly discovery from NuGet packages
+
+As noted in [Issue #7](https://github.com/awesome-inc/NuPlug/issues/7) the MEF part may load an awfully large number of assemblies, especially when considering the full dependency tree. As this not only may cause large startup times (preventing just-in-time code loading) but may also bypass binding redirects of the main application.
+
+Since v0.4 we added optional support for filtering the assemblies to be scanned by MEF
+
+    var regex = new Regex("Plugin.dll$");
+    var packageContainer = new PackageContainer<string> { FileFilter = regex.IsMatch });
+
+Using the example above, the package container will only scan files with names matching the specified regular expression, in this case files ending with `Plugin.dll`.
+
 #### Register plugin dependencies (MEF)
 
 In case your plugins need dependencies, you can add these to the package container's [CompositionBatch](https://msdn.microsoft.com/en-us/library/system.componentmodel.composition.hosting.compositionbatch(v=vs.110).aspx). Here is an example
