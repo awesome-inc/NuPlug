@@ -17,7 +17,7 @@
     - gitversion /l console /output buildserver
     - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
-  - build.bat NuPlug\NuPlug.csproj /t:Test;Deploy /v:m
+  - build.bat NuPlug\NuPlug.csproj /t:CoverageUpload;Deploy /v:m
 
 # all other branches
 -
@@ -31,4 +31,4 @@
   before_build:
     - gitversion /l console /output buildserver
   build_script:
-    - build.bat NuPlug\NuPlug.csproj /t:Test;Package /v:m
+    - build.bat NuPlug\NuPlug.csproj /t:CoverageUpload;Package /v:m
