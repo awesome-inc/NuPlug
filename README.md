@@ -43,6 +43,15 @@ Next, you need to specify which plugin packages to load. The most common way is 
 			new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", version))
 		));
 
+As an alternative, you can use xml files or string for the configuration.
+
+    const string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    <packages>
+        <package version=""0.1.1-beta0001"" id=""Caliburn.Micro.TestingHelpers"" targetFramework=""net452"" />
+    </packages>";
+    var xdoc = XDocument.Parse(xml);
+
+
 Then install your plugin packages by
 
 	packageManager.InstallPackages(packagesConfig);
