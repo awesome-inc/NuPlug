@@ -12,8 +12,8 @@ namespace NuPlug
             bool ignoreDependencies = true, bool allowPrerelease = false)
         {
             var packageIds = xml.Element("packages").Elements("package")
-                .Select(x => new PackageName(x.Attribute("id").Value,
-                    SemanticVersionParseCustom(x.Attribute("version").Value)))
+                .Select(x => new PackageName(x.Attribute("id").Value, 
+                    SemanticVersion.Parse(x.Attribute("version").Value)))
                 .ToList();
 
             var exceptions = new List<Exception>();
@@ -26,20 +26,6 @@ namespace NuPlug
 
             if (exceptions.Any())
                 throw new AggregateException("Error while installing packages", exceptions);
-        }
-
-        internal static SemanticVersion SemanticVersionParseCustom(string version)
-        {
-            var parts = version.Split('-');
-
-            // assume 0.1.1 without extra
-            if (parts.Length <= 1) return SemanticVersion.Parse(version);
-
-            // lets assume is is more than 2 parts (more than one dash)
-            var firstPart = parts[0];
-            var secondPart = string.Join("-", parts.Skip(1).ToArray());
-
-            return new SemanticVersion(Version.Parse(firstPart), secondPart);
         }
 
         public static void RemoveDuplicates(this IPackageManager packageManager, bool forceRemove = false)
