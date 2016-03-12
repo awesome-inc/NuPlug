@@ -8,6 +8,8 @@
 
 # NuPlug
 
+[![Join the chat at https://gitter.im/awesome-inc/NuPlug](https://badges.gitter.im/awesome-inc/NuPlug.svg)](https://gitter.im/awesome-inc/NuPlug?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Plugin management powered by [NuGet](https://github.com/nuget/home) and [MEF](https://msdn.microsoft.com/en-us/library/dd460648%28v=vs.110%29.aspx).
 
 ## What is it?
