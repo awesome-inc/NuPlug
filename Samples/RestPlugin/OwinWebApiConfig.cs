@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Web.Http;
 using System.Web.Http.Dependencies;
 using Newtonsoft.Json.Converters;

@@ -51,13 +51,15 @@ namespace ConsoleSample
             // ReSharper disable once ConvertToConstant.Local
             var repo = PackageRepositories.Create(
                 @"..\..\..\feed" // see 'Sample.targets'
-                , "https://packages.nuget.org/api/v2");
+                , "https://nuget.org/api/v2/");
 
-            var packageManager = new PackageManager(repo, "plugins") {Logger = new TraceLogger()};
+            var packageManager = new NuPlugPackageManager(repo, "plugins") {Logger = new TraceLogger()};
 
-            var version = Assembly.GetEntryAssembly().GetName().Version.ToString();
-#if !NCRUNCH
-            version = GitVersionInformation.NuGetVersion;
+            var version =
+#if NCRUNCH
+                Assembly.GetEntryAssembly().GetName().Version.ToString();
+#else
+                GitVersionInformation.NuGetVersion;
 #endif
             var packagesConfig = new XDocument(
                 new XElement("packages",
