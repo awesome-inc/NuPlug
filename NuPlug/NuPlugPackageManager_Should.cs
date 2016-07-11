@@ -25,6 +25,21 @@ namespace NuPlug
             // ReSharper restore ObjectCreationAsStatement
         }
 
+        [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/10", Title= "Speedup local packages")]
+        public void Ignore_Walk_info_by_default()
+        {
+            var context = new ContextFor<NuPlugPackageManager>();
+            var sut = context.BuildSut();
+
+            sut.DisableWalkInfo.Should().BeTrue();
+
+            var package = "foo".CreatePackage("0.1.0");
+            sut.Logger = new TraceLogger();
+
+            using (new TestTraceListener())
+                sut.InstallPackage(package, false, true);
+        }
+
         [Test]
         [Issue("#6", Title = "Installing packages should respect the requested target framework")]
         [TestCase("net452")]

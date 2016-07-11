@@ -13,7 +13,10 @@
     <releaseNotes>Revision: $Revision$</releaseNotes>
     <projectUrl>https://github.com/awesome-inc/NuPlug</projectUrl>
     <dependencies>
-      <dependency id="Autofac" version="3.5.2" />
+      <group targetFramework="net45">
+        <dependency id="Autofac" version="3.5.2" />
+        <dependency id="VLC.Native" version="2.2.0.1" />
+      </group>
     </dependencies>
   </metadata>
   <files>
