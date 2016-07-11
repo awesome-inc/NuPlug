@@ -1,11 +1,13 @@
 using System;
 using System.Net;
 using FluentAssertions;
+using NEdifis.Attributes;
 using NuGet;
 using NUnit.Framework;
 
 namespace NuPlug
 {
+    [ExcludeFromConventions("Unconventional test")]
     internal class LearningTests
     {
         [Test, Description("NO_PROXY=*.company.com throws argument/regexexception")]

@@ -5,6 +5,10 @@ namespace NuPlug
 {
     public class NuPlugPackageManager : PackageManager
     {
+#if PROFILE
+        private static readonly Profiler InstallPackageProfiler = new Profiler("InstallPackages");
+#endif
+
         public NuPlugPackageManager(IPackageRepository sourceRepository, string path) 
             : base(sourceRepository, path)
         {}
@@ -21,7 +25,10 @@ namespace NuPlug
 
         public override void InstallPackage(IPackage package, bool ignoreDependencies, bool allowPrereleaseVersions)
         {
-            InstallPackage(package, TargetFramework, ignoreDependencies, allowPrereleaseVersions);
+#if PROFILE
+            using (new ProfileMarker(InstallPackageProfiler))
+#endif
+                InstallPackage(package, TargetFramework, ignoreDependencies, allowPrereleaseVersions, true);
         }
     }
 }

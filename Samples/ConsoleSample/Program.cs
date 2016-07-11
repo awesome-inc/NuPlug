@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Xml.Linq;
 using Autofac;
 using Autofac.Core;
-using NuGet;
 using NuPlug;
 using PluginContracts;
 
@@ -17,7 +16,16 @@ namespace ConsoleSample
         {
             try
             {
+#if PROFILE
+                var sw = Stopwatch.StartNew();
+#endif
                 var container = Configure(CreatePackageContainer());
+
+#if PROFILE
+                var totalTime = sw.Elapsed;
+                foreach (var profiler in Profiler.AllProfilers.Values)
+                    profiler.Print(totalTime);
+#endif
 
                 Console.WriteLine("Press any key to exit.");
                 Console.ReadKey();
@@ -48,12 +56,12 @@ namespace ConsoleSample
 
         private static IPackageContainer<IModule> CreatePackageContainer()
         {
-            // ReSharper disable once ConvertToConstant.Local
-            var repo = PackageRepositories.Create(
+                // ReSharper disable once ConvertToConstant.Local
+                var repo = PackageRepositories.Create(
                 @"..\..\..\feed" // see 'Sample.targets'
                 , "https://nuget.org/api/v2/");
 
-            var packageManager = new NuPlugPackageManager(repo, "plugins") {Logger = new TraceLogger()};
+            var packageManager = new NuPlugPackageManager(repo, "plugins") { Logger = new TraceLogger() };
 
             var version =
 #if NCRUNCH
