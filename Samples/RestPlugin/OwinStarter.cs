@@ -10,7 +10,7 @@ namespace RestPlugin
     {
         public OwinStarter(ILifetimeScope container)
         {
-            var endpoint = "http://localhost:9000/";
+            const string endpoint = "http://localhost:9000/";
 
             OwinWebApiConfig.DependencyResolver = new AutofacWebApiDependencyResolver(container);
             WebApp.Start<OwinWebApiConfig>(endpoint);

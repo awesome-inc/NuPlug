@@ -1,14 +1,17 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/wl4qp6pr6067r7dl?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug)
-[![Nuget](https://img.shields.io/nuget/dt/nuplug.svg)](http://nuget.org/packages/nuplug)
-[![Nuget](https://img.shields.io/nuget/v/nuplug.svg)](http://nuget.org/packages/nuplug)
-[![Nuget](https://img.shields.io/nuget/vpre/nuplug.svg)](http://nuget.org/packages/nuplug)
-[![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/issue)](http://issuestats.com/github/awesome-inc/NuPlug) 
-[![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/pr)](http://issuestats.com/github/awesome-inc/NuPlug)
-[![Coverage Status](https://coveralls.io/repos/awesome-inc/NuPlug/badge.svg?branch=develop&service=github)](https://coveralls.io/github/awesome-inc/NuPlug?branch=develop)
 
 # NuPlug
 
 Plugin management powered by [NuGet](https://github.com/nuget/home) and [MEF](https://msdn.microsoft.com/en-us/library/dd460648%28v=vs.110%29.aspx).
+
+[![Join the chat at https://gitter.im/awesome-inc/NuPlug](https://badges.gitter.im/awesome-inc/NuPlug.svg)](https://gitter.im/awesome-inc/NuPlug?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build status](https://ci.appveyor.com/api/projects/status/wl4qp6pr6067r7dl?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/nuplug)
+
+[![Nuget](https://img.shields.io/nuget/dt/nuplug.svg)](http://nuget.org/packages/nuplug)
+[![Nuget](https://img.shields.io/nuget/v/nuplug.svg)](http://nuget.org/packages/nuplug)
+
+[![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/issue)](http://issuestats.com/github/awesome-inc/NuPlug) 
+[![Issue Stats](http://issuestats.com/github/awesome-inc/NuPlug/badge/pr)](http://issuestats.com/github/awesome-inc/NuPlug)
+[![Coverage Status](https://coveralls.io/repos/awesome-inc/NuPlug/badge.svg?branch=develop&service=github)](https://coveralls.io/github/awesome-inc/NuPlug?branch=develop)
 
 ## What is it?
 

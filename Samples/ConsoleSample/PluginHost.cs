@@ -11,8 +11,9 @@ namespace ConsoleSample
         {
             var assemblyName = (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).GetName();
             Name = assemblyName.Name;
+#if NCRUNCH
             Version = assemblyName.Version.ToString();
-#if !NCRUNCH
+#else
             Version = GitVersionInformation.InformationalVersion;
 #endif
         }
