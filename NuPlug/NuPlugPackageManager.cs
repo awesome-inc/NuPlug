@@ -5,13 +5,16 @@ namespace NuPlug
 {
     public class NuPlugPackageManager : PackageManager
     {
-#if PROFILE
+#if DEBUG
         private static readonly Profiler InstallPackageProfiler = new Profiler("InstallPackages");
 #endif
 
-        public NuPlugPackageManager(IPackageRepository sourceRepository, string path) 
+        public NuPlugPackageManager(IPackageRepository sourceRepository, string path)
             : base(sourceRepository, path)
-        {}
+        {
+        }
+
+        public bool DisableWalkInfo { get; set; } = true;
 
         public NuPlugPackageManager(IPackageRepository sourceRepository, IPackagePathResolver pathResolver, IFileSystem fileSystem) 
             : base(sourceRepository, pathResolver, fileSystem)
@@ -25,10 +28,10 @@ namespace NuPlug
 
         public override void InstallPackage(IPackage package, bool ignoreDependencies, bool allowPrereleaseVersions)
         {
-#if PROFILE
+#if DEBUG
             using (new ProfileMarker(InstallPackageProfiler))
 #endif
-                InstallPackage(package, TargetFramework, ignoreDependencies, allowPrereleaseVersions, true);
+                InstallPackage(package, TargetFramework, ignoreDependencies, allowPrereleaseVersions, DisableWalkInfo);
         }
     }
 }

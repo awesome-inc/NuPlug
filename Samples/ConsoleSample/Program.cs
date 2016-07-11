@@ -16,12 +16,12 @@ namespace ConsoleSample
         {
             try
             {
-#if PROFILE
+#if DEBUG
                 var sw = Stopwatch.StartNew();
 #endif
                 var container = Configure(CreatePackageContainer());
 
-#if PROFILE
+#if DEBUG
                 var totalTime = sw.Elapsed;
                 foreach (var profiler in Profiler.AllProfilers.Values)
                     profiler.Print(totalTime);
