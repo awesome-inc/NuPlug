@@ -76,14 +76,21 @@
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyResolver_Should.cs" />
     <Compile Include="IPackageContainer.cs" />
+    <Compile Include="IPackageRegistry.cs" />
     <Compile Include="IResolveAssembly.cs" />
     <Compile Include="LearningTests.cs" />
     <Compile Include="MessageLevelExtensions.cs" />
     <Compile Include="MessageLevelExtensions_Should.cs" />
     <Compile Include="NuGetPackageContainer_Should.cs" />
+    <Compile Include="NullPackage.cs" />
+    <Compile Include="NullPackage_Should.cs" />
     <Compile Include="NuPlugConventions.cs" />
     <Compile Include="NuPlugPackageManager.cs" />
     <Compile Include="NuPlugPackageManager_Should.cs" />
+    <Compile Include="NuPlugPackageRegistry.cs" />
+    <Compile Include="NuPlugPackageRegistry_Should.cs" />
+    <Compile Include="NuPlugPackageRepository.cs" />
+    <Compile Include="NuPlugPackageRepository_Should.cs" />
     <Compile Include="PackageContainer.cs" />
     <Compile Include="PackageContainer_Should.cs" />
     <Compile Include="NugetPackageContainer.cs" />
@@ -110,15 +117,15 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\GitVersionTask.3.5.4\build\dotnet\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.5.4\build\dotnet\GitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GitVersionTask.3.5.4\build\dotnet\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.3.5.4\build\dotnet\GitVersionTask.targets'))" />
     <Error Condition="!Exists('..\packages\OneClickBuild.1.10.2\build\OneClickBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OneClickBuild.1.10.2\build\OneClickBuild.targets'))" />
+    <Error Condition="!Exists('..\packages\GitVersionTask.3.6.0\build\dotnet\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.3.6.0\build\dotnet\GitVersionTask.targets'))" />
   </Target>
   <Import Project="..\packages\OneClickBuild.1.10.2\build\OneClickBuild.targets" Condition="Exists('..\packages\OneClickBuild.1.10.2\build\OneClickBuild.targets')" />
+  <Import Project="..\packages\GitVersionTask.3.6.0\build\dotnet\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.6.0\build\dotnet\GitVersionTask.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
