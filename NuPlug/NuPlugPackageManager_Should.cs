@@ -23,6 +23,13 @@ namespace NuPlug
             1.Invoking(x => new NuPlugPackageManager(null,null,null)).ShouldThrow<ArgumentNullException>();
             2.Invoking(x => new NuPlugPackageManager(null, string.Empty)).ShouldThrow<ArgumentException>();
             // ReSharper restore ObjectCreationAsStatement
+
+            var repo = Substitute.For<IPackageRepository>();
+            var sut = new NuPlugPackageManager(repo, "a");
+            sut.SourceRepository.Should().Be(repo);
+            sut.LocalRepository.Should().BeOfType<NuPlugPackageRepository>();
+
+            sut.CheckDowngrade.Should().BeFalse("We explicitly don't want downgrade functionality.");
         }
 
         [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/10", Title= "Speedup local packages")]
@@ -36,8 +43,14 @@ namespace NuPlug
             var package = "foo".CreatePackage("0.1.0");
             sut.Logger = new TraceLogger();
 
-            using (new TestTraceListener())
+            using (var tl = new TestTraceListener())
+            {
                 sut.InstallPackage(package, false, true);
+                var infos = tl.MessagesFor(TraceLevel.Info);
+                infos.Should().BeEquivalentTo(
+                    $"Installing '{package.Id} {package.Version}'.",
+                    $"Successfully installed '{package.Id} {package.Version}'.");
+            }
         }
 
         [Test]
@@ -106,6 +119,42 @@ namespace NuPlug
 
             package.Received().GetCompatiblePackageDependencies(targetFramework);
             sut.SourceRepository.Received().GetPackages();
+        }
+
+        [Test]
+        public void Ignore_AlreadyInstalled_Packages()
+        {
+            var context = new ContextFor<NuPlugPackageManager>();
+
+            var packageLookup = Substitute.For<IPackageLookup>();
+            var packageRegistry = new NuPlugPackageRegistry();
+            var localRepo = new NuPlugPackageRepository(packageLookup, packageRegistry);
+
+            var sut = context.BuildSut();
+            var foo = "foo".CreatePackage("0.1.0");
+            var bar = "bar".CreatePackage("0.1.1");
+            var deps = new[] { new PackageDependencySet(sut.TargetFramework, new[] { new PackageDependency(bar.Id) }) };
+            foo.DependencySets.Returns(deps);
+
+            packageRegistry.Add(bar);
+
+            var remotePackages = new[] { foo };
+            sut.SourceRepository.GetPackages().Returns(remotePackages.AsQueryable());
+            sut.SetLocalRepository(localRepo);
+
+            sut.Logger = new TraceLogger();
+            using (var tl = new TestTraceListener())
+            {
+                sut.InstallPackage(foo, false, true);
+
+                var infos = tl.MessagesFor(TraceLevel.Info);
+                infos.Should().BeEquivalentTo(
+                    $"Attempting to resolve dependency '{bar.Id}'.",
+                    //$"{bar.Id} already installed.",
+                    $"Installing '{foo.Id} {foo.Version}'.",
+                    $"Successfully installed '{foo.Id} {foo.Version}'."
+                    );
+            }
         }
     }
 }

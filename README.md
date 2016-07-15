@@ -29,15 +29,16 @@ First, install [NuPlug](https://github.com/awesome-inc/NuPlug) to your applicati
 
 Then in the startup part, create a package manager. Here is an example snippet from the `ConsoleSample` application:
 
-	var packageSource = "https://mynugetfeed/"; // UNC share, folder, ... 
-	var feed = PackageRepositoryFactory.Default.CreateRepository(packageSource);
-	var packageManager = new NuPlugPackageManager(feed, "plugins") 
+  var repo = PackageRepositories.For(
+      @"\\server\path\nuget\feed",  // some share for your own packages
+      "https://nuget.org/api/v2/"); // fallback to NuGet gallery for other dependencies
+      
+	var packageManager = new NuPlugPackageManager(repo, "plugins") 
       { 
-         Logger = new TraceLogger(),
-         TargetFramework = VersionHelper.GetTargetFramework()
+         Logger = new TraceLogger()
       };
 
-This will download NuGet packages from the specified package source to the output directory `plugins`.
+This will download NuGet packages from the specified package sources to the output directory `plugins`.
 
 Next, you need to specify which plugin packages to load. The most common way is to use a `packages.config` Xml file, e.g. 
 
@@ -164,6 +165,20 @@ We think that this will be addressed soon by the Nuget team. Meanwhile you shoul
          TargetFramework = VersionHelper.GetTargetFramework()
       }; 
 
+## Skip downloading dependencies that you are distributing with your app
+
+In the example above, we use [AutoFac](https://autofac.org/) as plugin infrastructure. This means that `AutoFac` is both a dependency of your app and all your plugins.
+
+The same is true for some cross-cutting concerns library, e.g. 
+
+- NLog for logging
+- WebApi for REST stuff
+- Caliburn.Micro for MVC/UI
+
+Because your app already distributes the required assemblies we want to skip downloading them again from some NuGet feed. The easiest way to do this is to embed `packages.config` as a resource into your app. NuPlug will pick up this resource and tell NuGet to skip downloading these packages.
+
+![Build `packages.config` as **Embedded Resource**](img/embed_packages_config.png)  
+
 ## Where to go from here?
 
 Some hints getting up to speed in production with NuPlug
@@ -172,7 +187,7 @@ Some hints getting up to speed in production with NuPlug
 To get up to speed you should automate as much of the manual tasks as possible and make it part of your build process. For instance, we do NuGet packaging using [OneClickBuild](https://github.com/awesome-inc/OneClickBuild)).
 
 ### 2. Speeding up development cycles for `DEBUG`
-During hot development, short feedback cycles are king. Note that, decoupling your code using plugins is cool but is likely to increase your development cycles unless you automate building and publishing the plugins within the standard Visual Studio build. To move fast, we totally skip NuGet packaging during `DEBUG` and just load the plugin assemblies from a directory. For this to work, you need two things
+During hot development, short feedback cycles are king. Note that decoupling your code using plugins is cool but is likely to increase your development cycles unless you automate building and publishing the plugins within the standard Visual Studio build. To move fast, we totally skip NuGet packaging during `DEBUG` and just load the plugin assemblies from a directory. For this to work you need two things
 
 1. Have an `AfterBuild` target to copy your modules output to this directory. For instance, we include a [Sample.targets](Samples\Sample.targets) containing a step to auto-copy the build plugin package to the local feed directory 
 
