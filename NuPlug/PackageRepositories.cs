@@ -5,11 +5,13 @@ using NuGet;
 
 namespace NuPlug
 {
-    public static class PackageRepositories
+    public class PackageRepositories : PackageRepositoryFactory
     {
-        public static IPackageRepository Create(params string[] packageSources)
+        public static IPackageRepositoryFactory Factory { get; set; } = new PackageRepositories();
+
+        public static IPackageRepository For(params string[] packageSources)
         {
-            return packageSources.Count() == 1
+            return packageSources.Length == 1
                 ? CreatePackageRepository(packageSources.Single())
                 : new AggregateRepository(packageSources.Select(CreatePackageRepository));
         }
@@ -20,7 +22,7 @@ namespace NuPlug
             if (!new Uri(safePackageSource, UriKind.RelativeOrAbsolute).IsAbsoluteUri)
                 safePackageSource = Path.Combine(Assemblies.HomePath, safePackageSource);
 
-            return PackageRepositoryFactory.Default.CreateRepository(safePackageSource);
+            return Factory.CreateRepository(safePackageSource);
         }
     }
 }

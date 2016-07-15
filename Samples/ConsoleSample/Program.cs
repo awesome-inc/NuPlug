@@ -57,7 +57,7 @@ namespace ConsoleSample
         private static IPackageContainer<IModule> CreatePackageContainer()
         {
                 // ReSharper disable once ConvertToConstant.Local
-                var repo = PackageRepositories.Create(
+                var repo = PackageRepositories.For(
                 @"..\..\..\feed" // see 'Sample.targets'
                 , "https://nuget.org/api/v2/");
 
@@ -72,7 +72,7 @@ namespace ConsoleSample
             var packagesConfig = new XDocument(
                 new XElement("packages",
                     new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", version))
-                    , new XElement("package", new XAttribute("id", "NuPlug.RestPlugin"), new XAttribute("version", version))
+                    //, new XElement("package", new XAttribute("id", "NuPlug.RestPlugin"), new XAttribute("version", version))
                     ));
 
             Trace.TraceInformation("Installing packages...");
