@@ -5,9 +5,8 @@ using NuGet;
 
 namespace NuPlug
 {
-    public class NuPlugPackageRepository : IPackageLookup
+    public class NuPlugPackageRepository : IPackageLookup, ISkipPackages
     {
-        private readonly IPackageRepository _packageRepository;
         private readonly IPackageLookup _packageLookup;
         private readonly IPackageRegistry _packageRegistry;
 
@@ -16,34 +15,36 @@ namespace NuPlug
         {
             if (packageLookup == null) throw new ArgumentNullException(nameof(packageLookup));
             _packageLookup = packageLookup;
-            _packageRepository = packageLookup;
             _packageRegistry = packageRegistry ?? new NuPlugPackageRegistry();
         }
 
         public IQueryable<IPackage> GetPackages()
         {
-            return _packageRepository.GetPackages();
+            return _packageLookup.GetPackages();
         }
 
         public void AddPackage(IPackage package)
         {
-            _packageRepository.AddPackage(package);
+            if (package is NullPackage)
+                _packageRegistry.Add(package);
+            else
+                _packageLookup.AddPackage(package);
         }
 
         public void RemovePackage(IPackage package)
         {
-            _packageRepository.RemovePackage(package);
+            _packageLookup.RemovePackage(package);
         }
 
-        public string Source => _packageRepository.Source;
+        public string Source => _packageLookup.Source;
 
         public PackageSaveModes PackageSaveMode
         {
-            get { return _packageRepository.PackageSaveMode; }
-            set { _packageRepository.PackageSaveMode = value; }
+            get { return _packageLookup.PackageSaveMode; }
+            set { _packageLookup.PackageSaveMode = value; }
         }
 
-        public bool SupportsPrereleasePackages => _packageRepository.SupportsPrereleasePackages;
+        public bool SupportsPrereleasePackages => _packageLookup.SupportsPrereleasePackages;
 
         public bool Exists(string packageId, SemanticVersion version)
         {
@@ -60,6 +61,11 @@ namespace NuPlug
         {
             var packages = _packageRegistry.FindPackagesById(packageId).ToList();
             return packages.Any() ? packages : _packageLookup.FindPackagesById(packageId);
+        }
+
+        public void SkipPackages(IEnumerable<IPackageName> packages)
+        {
+            packages.ToList().ForEach(p => _packageRegistry.Add(p.Id, p.Version));
         }
     }
 }

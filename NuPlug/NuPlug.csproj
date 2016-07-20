@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\NuPlug.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\NuPlug.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentAssertions, Version=4.11.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
@@ -78,6 +80,7 @@
     <Compile Include="IPackageContainer.cs" />
     <Compile Include="IPackageRegistry.cs" />
     <Compile Include="IResolveAssembly.cs" />
+    <Compile Include="ISkipPackages.cs" />
     <Compile Include="LearningTests.cs" />
     <Compile Include="MessageLevelExtensions.cs" />
     <Compile Include="MessageLevelExtensions_Should.cs" />
@@ -94,8 +97,8 @@
     <Compile Include="PackageContainer.cs" />
     <Compile Include="PackageContainer_Should.cs" />
     <Compile Include="NugetPackageContainer.cs" />
-    <Compile Include="PackageManagerExtensions.cs" />
-    <Compile Include="PackageManagerExtensions_Should.cs" />
+    <Compile Include="NuPlugExtensions.cs" />
+    <Compile Include="NuPlugExtensions_Should.cs" />
     <Compile Include="PackageRepositories.cs" />
     <Compile Include="PackageRepositories_Should.cs" />
     <Compile Include="Profiler.cs" />
