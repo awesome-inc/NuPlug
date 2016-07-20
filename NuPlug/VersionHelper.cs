@@ -18,7 +18,7 @@ namespace NuPlug
         /// <param name="assembly">If null, defaults to <see cref="Assembly.GetEntryAssembly"/> or <see cref="Assembly.GetCallingAssembly"/></param>.
         public static FrameworkName GetTargetFramework(Assembly assembly = null)
         {
-            var safeAssembly = assembly ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly());
+            var safeAssembly = assembly ?? (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly());
             var a = safeAssembly.GetCustomAttributes(typeof(TargetFrameworkAttribute), false)
                 .OfType<TargetFrameworkAttribute>().FirstOrDefault();
             return a != null ? new FrameworkName(a.FrameworkName) : null;
