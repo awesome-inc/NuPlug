@@ -58,9 +58,10 @@ As an alternative, you can use xml files or string for the configuration.
 
 Then install your plugin packages by
 
+    packageManager.SkipPackages(); // skip runtime packages
 	packageManager.InstallPackages(packagesConfig);
 
-	// When plugins update, be sure to remove previous versions 
+	// When plugins update, be sure to remove previous versions to avoid ambiguities during assembly load. 
 	packageManager.RemoveDuplicates();
 
 Finally, load the installed packages using `NuGetPackageContainer<T>` typed to your plugin interface. The console sample uses [AutoFac modules](http://docs.autofac.org/en/latest/configuration/modules.html): 
@@ -177,7 +178,13 @@ The same is true for some cross-cutting concerns library, e.g.
 
 Because your app already distributes the required assemblies we want to skip downloading them again from some NuGet feed. The easiest way to do this is to embed `packages.config` as a resource into your app. NuPlug will pick up this resource and tell NuGet to skip downloading these packages.
 
-![Build `packages.config` as **Embedded Resource**](img/embed_packages_config.png)  
+![Build `packages.config` as **Embedded Resource**](img/embed_packages_config.png)
+
+Then use
+
+    packageManager.SkipPackages();
+
+before installing. 
 
 ## Where to go from here?
 

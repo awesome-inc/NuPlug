@@ -29,10 +29,7 @@ namespace NuPlug
 
         private static IPackageRepository CreatePackageRepository(string packageSource)
         {
-            var safePackageSource = packageSource;
-            if (!new Uri(safePackageSource, UriKind.RelativeOrAbsolute).IsAbsoluteUri)
-                safePackageSource = Path.Combine(Assemblies.HomePath, safePackageSource);
-
+            var safePackageSource = Assemblies.GetFullPath(packageSource);
             return Factory.CreateRepository(safePackageSource);
         }
     }

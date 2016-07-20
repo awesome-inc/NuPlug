@@ -8,6 +8,14 @@ namespace NuPlug
     {
         public static readonly string HomePath = GetDirectory(null);
 
+        public static string GetFullPath(string packageSource)
+        {
+            var safePackageSource = Environment.ExpandEnvironmentVariables(packageSource);
+            if (!new Uri(safePackageSource, UriKind.RelativeOrAbsolute).IsAbsoluteUri)
+                safePackageSource = Path.Combine(HomePath, safePackageSource);
+            return safePackageSource;
+        }
+
         public static string GetLocation(this Assembly assembly)
         {
             var safeAssembly = assembly ?? (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly());
