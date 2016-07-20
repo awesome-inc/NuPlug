@@ -121,7 +121,7 @@ namespace NuPlug
             sut.SourceRepository.Received().GetPackages();
         }
 
-        [Test]
+        [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/11")]
         public void Ignore_AlreadyInstalled_Packages()
         {
             var context = new ContextFor<NuPlugPackageManager>();
@@ -136,7 +136,7 @@ namespace NuPlug
             var deps = new[] { new PackageDependencySet(sut.TargetFramework, new[] { new PackageDependency(bar.Id) }) };
             foo.DependencySets.Returns(deps);
 
-            packageRegistry.Add(bar);
+            localRepo.AddPackage(new NullPackage(bar.Id, bar.Version));
 
             var remotePackages = new[] { foo };
             sut.SourceRepository.GetPackages().Returns(remotePackages.AsQueryable());
@@ -155,6 +155,36 @@ namespace NuPlug
                     $"Successfully installed '{foo.Id} {foo.Version}'."
                     );
             }
+        }
+
+        [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/11")]
+        public void Support_an_Api_to_ignore_packages()
+        {
+            var context = new ContextFor<NuPlugPackageManager>();
+
+            var sut = context.BuildSut();
+
+            sut.Should().BeAssignableTo<ISkipPackages>();
+
+            var foo = "foo".CreatePackage("0.1.0");
+            var bar = "bar".CreatePackage("0.1.1");
+            var deps = new[] { new PackageDependencySet(sut.TargetFramework, new[] { new PackageDependency(bar.Id) }) };
+            foo.DependencySets.Returns(deps);
+
+            var remotePackages = new[] { foo };
+            sut.SourceRepository.GetPackages().Returns(remotePackages.AsQueryable());
+
+            var localRepo = (IPackageRepository)Substitute.For(new[] { typeof (IPackageRepository), typeof (ISkipPackages)}, new object[] {});
+            sut.SetLocalRepository(localRepo);
+
+            var packagesToSkip = new[] {bar};
+            sut.SkipPackages(packagesToSkip);
+
+            var skipPackages = (ISkipPackages) localRepo;
+            skipPackages.Received().SkipPackages(packagesToSkip);
+
+            // extension method
+            sut.SkipPackages(typeof(NuPlugPackageManager_Should).Assembly, "packages.config");
         }
     }
 }

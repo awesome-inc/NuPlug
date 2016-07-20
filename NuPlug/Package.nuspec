@@ -22,6 +22,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\NuPlug.dll" target="lib\net45"/>
+    <file src="bin\Release\NuPlug.*" target="lib\net45"/>
   </files>
 </package>

@@ -3,13 +3,25 @@ using NuGet;
 
 namespace NuPlug
 {
+    /// <summary>
+    /// An <see cref="ILogger"/> implementation for <see cref="Trace"/>.
+    /// </summary>
     public class TraceLogger : ILogger
     {
+        /// <summary>
+        /// Returns <see cref="FileConflictResolution"/>
+        /// </summary>
         public FileConflictResolution ResolveFileConflict(string message)
         {
             return FileConflictResolution;
         }
 
+        /// <summary>
+        /// Logs the specified message to <see cref="Trace"/>.
+        /// </summary>
+        /// <param name="level">The trace level</param>
+        /// <param name="message">The message</param>
+        /// <param name="args">The args</param>
         public void Log(MessageLevel level, string message, params object[] args)
         {
             var traceLevel = level.ToTraceLevel();
@@ -22,6 +34,9 @@ namespace NuPlug
             }
         }
 
+        /// <summary>
+        /// The <see cref="NuGet.FileConflictResolution"/>. Default is <see cref="NuGet.FileConflictResolution.Ignore"/>
+        /// </summary>
         public FileConflictResolution FileConflictResolution { get; set; } = FileConflictResolution.Ignore;
     }
 }
