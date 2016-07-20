@@ -7,12 +7,29 @@ using System.Reflection;
 
 namespace NuPlug
 {
+    /// <summary>
+    /// Resolves assemblies from custom directories, e.g. plugin or nuget package directories.
+    /// </summary>
     public class AssemblyResolver : IResolveAssembly
     {
         private bool _isDisposed;
+        /// <summary>
+        /// The directories to check when resolving assemblies.
+        /// </summary>
         public IList<string> Directories { get; }
+
+        /// <summary>
+        /// A flag specifying when to trace verbose information. 
+        /// If false (default), traces only messages when the <see cref="AssemblyResolver"/> actually resolved an assembly 
+        /// from a file in the <see cref="Directories"/>.
+        /// If true, traces any resolution including the requiesting assembly and the version override (if any).
+        /// </summary>
         public bool TraceAlways { get; set; }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AssemblyResolver" /> class.
+        /// </summary>
+        /// <param name="directories">The directories</param>
         public AssemblyResolver(IEnumerable<string> directories = null)
         {
             Directories = (directories ?? Enumerable.Empty<string>()).ToList();
@@ -22,6 +39,9 @@ namespace NuPlug
 #endif
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             if (_isDisposed) return;

@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Xml.Linq;
 using FluentAssertions;
 using NEdifis;
 using NEdifis.Attributes;
@@ -70,16 +71,16 @@ namespace NuPlug
             registry.FindPackage(package.Id, package.Version).Returns(package);
             sut.FindPackage(package.Id, package.Version).Should().Be(package);
 
-            registry.FindPackage(package.Id, package.Version).Returns((IPackage)null);
+            registry.FindPackage(package.Id, package.Version).Returns((IPackage) null);
             lookup.FindPackage(package.Id, package.Version).Returns(package);
             sut.FindPackage(package.Id, package.Version).Should().Be(package);
 
-            lookup.FindPackage(package.Id, package.Version).Returns((IPackage)null);
+            lookup.FindPackage(package.Id, package.Version).Returns((IPackage) null);
             sut.FindPackage(package.Id, package.Version).Should().BeNull();
 
             sut.FindPackagesById(package.Id).Should().BeEmpty();
 
-            var packages = new [] {package};
+            var packages = new[] {package};
             registry.FindPackagesById(package.Id).Returns(packages);
             sut.FindPackagesById(package.Id).ShouldAllBeEquivalentTo(packages);
 
@@ -103,6 +104,23 @@ namespace NuPlug
 
             ctx.For<IPackageRegistry>().Exists(package.Id, Arg.Any<SemanticVersion>()).Returns(true);
             sut.Exists(package.Id, package.Version).Should().BeTrue();
+        }
+
+        [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/11")]
+        public void Support_an_Api_to_ignore_packages()
+        {
+            var ctx = new ContextFor<NuPlugPackageRepository>();
+            var sut = ctx.BuildSut();
+
+            sut.Should().BeAssignableTo<ISkipPackages>();
+
+            var bar = "bar".CreatePackage("0.1.1");
+            var packagesToSkip = new[] {bar}.ToList();
+
+            sut.SkipPackages(packagesToSkip);
+
+            var packageRegistry = ctx.For<IPackageRegistry>();
+            packagesToSkip.ForEach(p => packageRegistry.Received().Add(p.Id, p.Version));
         }
     }
 }

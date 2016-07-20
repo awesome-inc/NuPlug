@@ -6,6 +6,9 @@ using NuGet;
 
 namespace NuPlug
 {
+    /// <summary>
+    /// The generic NuPlug <see cref="IPackageContainer{TItem}"/> using MEF composition to resolve items/plugins from NuGet packages.
+    /// </summary>
     public class NuGetPackageContainer<TItem> 
         : PackageContainer<TItem> where TItem : class 
     {
@@ -14,6 +17,11 @@ namespace NuPlug
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly FrameworkName _framework = VersionHelper.GetTargetFramework();
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="NuGetPackageContainer{TItem}" /> class.
+        /// </summary>
+        /// <param name="packageManager">The NuGet package manager to use. Usually a <see cref="NuPlugPackageManager"/></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public NuGetPackageContainer(IPackageManager packageManager) 
         {
             if (packageManager == null) throw new ArgumentNullException(nameof(packageManager));

@@ -1,32 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using NuGet;
 
 namespace NuPlug
 {
+    /// <summary>
+    /// A custom <see cref="IPackageRegistry"/> used to ignore existing packages at runtime. 
+    /// </summary>
     public class NuPlugPackageRegistry : IPackageRegistry
     {
-        private static readonly Assembly Assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-        private static readonly string AppDir = Assembly.GetDirectory();
+        private static readonly string AppDir = (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).GetDirectory();
 
         private readonly IDictionary<string, IDictionary<SemanticVersion, IPackage>> _packages =
             new Dictionary<string, IDictionary<SemanticVersion, IPackage>>();
 
-        public NuPlugPackageRegistry()
-        {
-            ReadPackagesConfig();
-        }
-
-        public NuPlugPackageRegistry(Stream packagesConfig)
-        {
-            ReadPackagesConfig(packagesConfig);
-        }
-
+        /// <summary>
+        /// Check whether a package exists in the registry
+        /// </summary>
+        /// <returns>True, if found; False, otherwise.</returns>
         public bool Exists(string packageId, SemanticVersion version = null)
         {
             IDictionary<SemanticVersion, IPackage> versions;
@@ -39,6 +33,11 @@ namespace NuPlug
             return File.Exists(libFile);
         }
 
+        /// <summary>
+        /// Finds a package in the registry. 
+        /// As this is used to "fake" the existence of certain packages, the resulting package can be of type <see cref="NullPackage"/>.
+        /// </summary>
+        /// <returns>A valid <see cref="IPackage"/> if found; null, otherwise.</returns>
         public IPackage FindPackage(string packageId, SemanticVersion version)
         {
             if (string.IsNullOrWhiteSpace(packageId)) throw new ArgumentNullException(nameof(packageId));
@@ -54,6 +53,9 @@ namespace NuPlug
             return null;
         }
 
+        /// <summary>
+        /// Finds all packages for the specified <paramref name="packageId"/>.
+        /// </summary>
         public IEnumerable<IPackage> FindPackagesById(string packageId)
         {
             if (string.IsNullOrWhiteSpace(packageId)) throw new ArgumentNullException(nameof(packageId));
@@ -63,6 +65,9 @@ namespace NuPlug
             return Enumerable.Empty<IPackage>();
         }
 
+        /// <summary>
+        /// Adds a package to the registry.
+        /// </summary>
         public void Add(IPackage package)
         {
             if (package == null) throw new ArgumentNullException(nameof(package));
@@ -77,47 +82,12 @@ namespace NuPlug
             _packages[package.Id] = versions;
         }
 
+        /// <summary>
+        /// Adds a package to the registry.
+        /// </summary>
         public void Add(string packageId, SemanticVersion version)
         {
             Add(new NullPackage(packageId, version));
-        }
-
-        internal void ReadPackagesConfig(Func<Stream> getStream = null)
-        {
-            var safeGetStream = getStream ?? (() => GetResourceStream("packages.config"));
-            using (var stream = safeGetStream())
-            {
-                if (stream == null) return;
-                try
-                {
-                    ReadPackagesConfig(stream);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning($"Could not read embedded resource 'packages.config': {ex}");
-                }
-            }
-        }
-
-        public void ReadPackagesConfig(Stream stream)
-        {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
-            var xDoc = XDocument.Load(stream);
-            var packages = xDoc.Element("packages")?.Elements("package").ToList();
-            packages?.ForEach(p => Add(p.Attribute("id").Value, SemanticVersion.Parse(p.Attribute("version").Value)));
-        }
-
-        private static Stream GetResourceStream(string resourceName)
-        {
-            var name = Assembly.GetManifestResourceNames()
-                .OrderBy(s => s.Length)
-                .FirstOrDefault(n => n.EndsWith(resourceName));
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                Trace.WriteLine($"NuPlug: Did not find embedded resource '{resourceName}'");
-                return null;
-            }
-            return Assembly.GetManifestResourceStream(name);
         }
     }
 }

@@ -1,10 +1,6 @@
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using FluentAssertions;
 using NEdifis.Attributes;
-using NEdifis.Diagnostics;
 using NuGet;
 using NUnit.Framework;
 
@@ -39,22 +35,6 @@ namespace NuPlug
 
             sut.FindPackagesById(package.Id).ShouldAllBeEquivalentTo(new[] {package});
             sut.FindPackagesById("bar").Should().BeEmpty();
-        }
-
-        [Test]
-        public void Not_break_on_invalid_packages_config_resources()
-        {
-            var sut = new NuPlugPackageRegistry();
-
-            using (var tl = new TestTraceListener())
-            {
-                sut.ReadPackagesConfig(() => null);
-                tl.MessagesFor(TraceLevel.Warning).Should().BeEmpty("silently ignore null streams");
-
-                using (var stream = new MemoryStream())
-                    sut.ReadPackagesConfig(() => stream);
-                tl.MessagesFor(TraceLevel.Warning).Single().Should().StartWith("Could not read embedded resource 'packages.config': System.Xml.XmlException");
-            }
         }
     }
 }

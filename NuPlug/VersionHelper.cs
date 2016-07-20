@@ -7,11 +7,18 @@ using NuGet;
 
 namespace NuPlug
 {
+    /// <summary>
+    /// Helper class for getting and matching <see cref="FrameworkName"/> at runtime.
+    /// </summary>
     public static class VersionHelper
     {
+        /// <summary>
+        /// Tries reading the <see cref="TargetFrameworkAttribute"/> from the specified assembly
+        /// </summary>
+        /// <param name="assembly">If null, defaults to <see cref="Assembly.GetEntryAssembly"/> or <see cref="Assembly.GetCallingAssembly"/></param>.
         public static FrameworkName GetTargetFramework(Assembly assembly = null)
         {
-            var safeAssembly = assembly ?? (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly());
+            var safeAssembly = assembly ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly());
             var a = safeAssembly.GetCustomAttributes(typeof(TargetFrameworkAttribute), false)
                 .OfType<TargetFrameworkAttribute>().FirstOrDefault();
             return a != null ? new FrameworkName(a.FrameworkName) : null;

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using Autofac;
 using Autofac.Core;
+using NuGet;
 using NuPlug;
 using PluginContracts;
 
@@ -63,6 +64,8 @@ namespace ConsoleSample
 
             var packageManager = new NuPlugPackageManager(repo, "plugins") { Logger = new TraceLogger() };
 
+            packageManager.SkipPackages();
+
             var version =
 #if NCRUNCH
                 Assembly.GetEntryAssembly().GetName().Version.ToString();
@@ -75,7 +78,7 @@ namespace ConsoleSample
                     //, new XElement("package", new XAttribute("id", "NuPlug.RestPlugin"), new XAttribute("version", version))
                     ));
 
-            Trace.TraceInformation("Installing packages...");
+            Trace.TraceInformation($"Installing packages ({PrettySource(packageManager.SourceRepository)} --> {PrettySource(packageManager.LocalRepository)})...");
             packageManager.InstallPackages(packagesConfig, false, true);
 
             Trace.TraceInformation("Removing duplicates...");
@@ -89,6 +92,15 @@ namespace ConsoleSample
             var rtlEx = ex as ReflectionTypeLoadException;
             var e = rtlEx?.LoaderExceptions.FirstOrDefault();
             return e?.ToString() ?? ex.ToString();
+        }
+
+        private static string PrettySource(IPackageRepository repository)
+        {
+            var aggregateRepository = repository as AggregateRepository;
+            if (aggregateRepository != null)
+                return string.Join(", ", aggregateRepository.Repositories.Select(PrettySource));
+
+            return $"'{repository.Source}'";
         }
     }
 }
