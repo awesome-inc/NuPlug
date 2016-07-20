@@ -9,8 +9,19 @@ using NuGet;
 
 namespace NuPlug
 {
+    /// <summary>
+    /// NuPlug-specific extension methods.
+    /// </summary>
     public static class NuPlugExtensions
     {
+        /// <summary>
+        /// Helper method to install the packages from the specified <paramref name="xml"/>.
+        /// </summary>
+        /// <param name="packageManager">The package manager</param>
+        /// <param name="xml">The xml document specifying packages to install</param>
+        /// <param name="ignoreDependencies">If false, also recursively installs all dependencies</param>
+        /// <param name="allowPrerelease">If true, allows prerelase versions</param>
+        /// <exception cref="AggregateException"></exception>
         public static void InstallPackages(this IPackageManager packageManager, XDocument xml,
             bool ignoreDependencies = true, bool allowPrerelease = false)
         {
@@ -31,6 +42,11 @@ namespace NuPlug
                 throw new AggregateException("Error while installing packages", exceptions);
         }
 
+        /// <summary>
+        /// Removes duplicate packages by uninstalling older packages. This is needed to resolve ambiguities for the underlying <see cref="IResolveAssembly"/>.
+        /// </summary>
+        /// <param name="packageManager">The package manager</param>
+        /// <param name="forceRemove">If true, force uninstallation</param>
         public static void RemoveDuplicates(this IPackageManager packageManager, bool forceRemove = false)
         {
             var duplicates = packageManager.LocalRepository.GetPackages()
@@ -42,6 +58,13 @@ namespace NuPlug
             duplicates.ForEach(p => packageManager.UninstallPackage(p, forceRemove, false));
         }
 
+        /// <summary>
+        /// Skips all packages specified in an embedded resource <paramref name="resourceName"/> of the specified <paramref name="assembly"/>.
+        /// This tries finding and reading embedded resource as an <see cref="XDocument"/> with the existing packages to skip installing.
+        /// </summary>
+        /// <param name="skipPackages">The instance</param>
+        /// <param name="assembly">The assembly</param>
+        /// <param name="resourceName">The resource name</param>
         public static void SkipPackages(this ISkipPackages skipPackages, Assembly assembly = null, string resourceName = "packages.config")
         {
             var safeAssembly = assembly ?? Assembly.GetCallingAssembly();
@@ -60,6 +83,11 @@ namespace NuPlug
             }
         }
 
+        /// <summary>
+        /// Skips all packages declared in specified <paramref name="packagesConfig"/>.
+        /// </summary>
+        /// <param name="skipPackages">The instance</param>
+        /// <param name="packagesConfig">The document</param>
         public static void SkipPackages(this ISkipPackages skipPackages, XDocument packagesConfig)
         {
             var xPackages = packagesConfig.Element("packages")?.Elements("package").ToList();
