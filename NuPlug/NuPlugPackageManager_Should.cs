@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using FluentAssertions;
@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace NuPlug
 {
-    [TestFixtureFor(typeof(NuPlugPackageManager))]
+    [TestFixtureFor(typeof (NuPlugPackageManager))]
     // ReSharper disable once InconsistentNaming
     internal class NuPlugPackageManager_Should
     {
@@ -19,8 +19,8 @@ namespace NuPlug
         public void Override_all_base_ctors()
         {
             // ReSharper disable ObjectCreationAsStatement
-            0.Invoking(x => new NuPlugPackageManager(null, null, null,null)).ShouldThrow<ArgumentNullException>();
-            1.Invoking(x => new NuPlugPackageManager(null,null,null)).ShouldThrow<ArgumentNullException>();
+            0.Invoking(x => new NuPlugPackageManager(null, null, null, null)).ShouldThrow<ArgumentNullException>();
+            1.Invoking(x => new NuPlugPackageManager(null, null, null)).ShouldThrow<ArgumentNullException>();
             2.Invoking(x => new NuPlugPackageManager(null, string.Empty)).ShouldThrow<ArgumentException>();
             // ReSharper restore ObjectCreationAsStatement
 
@@ -32,7 +32,7 @@ namespace NuPlug
             sut.CheckDowngrade.Should().BeFalse("We explicitly don't want downgrade functionality.");
         }
 
-        [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/10", Title= "Speedup local packages")]
+        [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/10", Title = "Speedup local packages")]
         public void Ignore_Walk_info_by_default()
         {
             var context = new ContextFor<NuPlugPackageManager>();
@@ -91,14 +91,14 @@ namespace NuPlug
             var otherDependency = "buzz".CreatePackage("0.1.2");
             var deps = new[]
             {
-                new PackageDependencySet(targetFramework, new [] {new PackageDependency(dependency.Id) }),
-                new PackageDependencySet(otherFramework, new [] {new PackageDependency(otherDependency.Id) })
+                new PackageDependencySet(targetFramework, new[] {new PackageDependency(dependency.Id)}),
+                new PackageDependencySet(otherFramework, new[] {new PackageDependency(otherDependency.Id)})
             };
             package.DependencySets.Returns(deps);
 
             var localPackages = Enumerable.Empty<IPackage>();
             sut.LocalRepository.GetPackages().Returns(localPackages.AsQueryable());
-            var remotePackages = new[] { package, dependency, otherDependency };
+            var remotePackages = new[] {package, dependency, otherDependency};
             sut.SourceRepository.GetPackages().Returns(remotePackages.AsQueryable());
 
             //repo
@@ -110,7 +110,7 @@ namespace NuPlug
 
                 var infos = ttl.MessagesFor(TraceLevel.Info);
                 infos.Should().BeEquivalentTo(
-                    $"Attempting to resolve dependency '{dependency.Id}'.", 
+                    $"Attempting to resolve dependency '{dependency.Id}'.",
                     $"Installing '{dependency.Id} {dependency.Version}'.",
                     $"Successfully installed '{dependency.Id} {dependency.Version}'.",
                     $"Installing '{package.Id} {package.Version}'.",
@@ -132,13 +132,15 @@ namespace NuPlug
 
             var sut = context.BuildSut();
             var foo = "foo".CreatePackage("0.1.0");
-            var bar = "bar".CreatePackage("0.1.1");
-            var deps = new[] { new PackageDependencySet(sut.TargetFramework, new[] { new PackageDependency(bar.Id) }) };
+            var bar = "bar".CreatePackage("2.9.0");
+            var versionSpec = new VersionSpec(SemanticVersion.Parse("2.6.0")) {MaxVersion = null};
+            var deps = new[]
+            {new PackageDependencySet(sut.TargetFramework, new[] {new PackageDependency(bar.Id, versionSpec)})};
             foo.DependencySets.Returns(deps);
 
             localRepo.AddPackage(new NullPackage(bar.Id, bar.Version));
 
-            var remotePackages = new[] { foo };
+            var remotePackages = new[] {foo};
             sut.SourceRepository.GetPackages().Returns(remotePackages.AsQueryable());
             sut.SetLocalRepository(localRepo);
 
@@ -149,7 +151,7 @@ namespace NuPlug
 
                 var infos = tl.MessagesFor(TraceLevel.Info);
                 infos.Should().BeEquivalentTo(
-                    $"Attempting to resolve dependency '{bar.Id}'.",
+                    $"Attempting to resolve dependency '{bar.Id} (≥ {versionSpec.MinVersion})'.",
                     //$"{bar.Id} already installed.",
                     $"Installing '{foo.Id} {foo.Version}'.",
                     $"Successfully installed '{foo.Id} {foo.Version}'."
@@ -168,13 +170,15 @@ namespace NuPlug
 
             var foo = "foo".CreatePackage("0.1.0");
             var bar = "bar".CreatePackage("0.1.1");
-            var deps = new[] { new PackageDependencySet(sut.TargetFramework, new[] { new PackageDependency(bar.Id) }) };
+            var deps = new[] {new PackageDependencySet(sut.TargetFramework, new[] {new PackageDependency(bar.Id)})};
             foo.DependencySets.Returns(deps);
 
-            var remotePackages = new[] { foo };
+            var remotePackages = new[] {foo};
             sut.SourceRepository.GetPackages().Returns(remotePackages.AsQueryable());
 
-            var localRepo = (IPackageRepository)Substitute.For(new[] { typeof (IPackageRepository), typeof (ISkipPackages)}, new object[] {});
+            var localRepo =
+                (IPackageRepository)
+                    Substitute.For(new[] {typeof (IPackageRepository), typeof (ISkipPackages)}, new object[] {});
             sut.SetLocalRepository(localRepo);
 
             var packagesToSkip = new[] {bar};
@@ -184,7 +188,40 @@ namespace NuPlug
             skipPackages.Received().SkipPackages(packagesToSkip);
 
             // extension method
-            sut.SkipPackages(typeof(NuPlugPackageManager_Should).Assembly, "packages.config");
+            sut.SkipPackages(typeof (NuPlugPackageManager_Should).Assembly, "packages.config");
+        }
+
+        [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/11")]
+        public void Log_and_rethrow()
+        {
+            var context = new ContextFor<NuPlugPackageManager>();
+            var sut = context.BuildSut();
+
+            var foo = "foo".CreatePackage("0.1.0");
+
+            var expExc = new InvalidOperationException("test");
+            context.For<IPackageRepository>(nameof(sut.LocalRepository))
+                .GetPackages()
+                .Returns(x => { throw expExc; });
+
+            using (var tl = new TestTraceListener())
+            {
+                sut.Logger = new TraceLogger();
+
+                try
+                {
+                    sut.InstallPackage(foo, true, false);
+                }
+                catch (Exception ex)
+                {
+                    ex.Should().Be(expExc);
+                }
+
+                tl.MessagesFor(TraceLevel.Warning)
+                    .Single()
+                    .Should()
+                    .StartWith($"Could not install '{foo.Id} {foo.Version}': ");
+            }
         }
     }
 }

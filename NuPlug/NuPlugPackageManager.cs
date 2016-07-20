@@ -21,7 +21,7 @@ namespace NuPlug
         /// <param name="sourceRepository">The source repository</param>
         /// <param name="path">The local package path. Can be relative</param>
         public NuPlugPackageManager(IPackageRepository sourceRepository, string path)
-            : this(sourceRepository, new DefaultPackagePathResolver(path), new PhysicalFileSystem(path))
+            : this(sourceRepository, new DefaultPackagePathResolver(Assemblies.GetFullPath(path)), new PhysicalFileSystem(Assemblies.GetFullPath(path)))
         {
             CheckDowngrade = false;
         }
@@ -67,16 +67,21 @@ namespace NuPlug
         /// <param name="allowPrereleaseVersions">If true, allows prerelase versions</param>
         public override void InstallPackage(IPackage package, bool ignoreDependencies, bool allowPrereleaseVersions)
         {
+            if (package == null) throw new ArgumentNullException(nameof(package));
 #if DEBUG
             using (new ProfileMarker(InstallPackageProfiler))
 #endif
-                InstallPackage(package, TargetFramework, ignoreDependencies, allowPrereleaseVersions, DisableWalkInfo);
-        }
-
-        internal void SetLocalRepository(IPackageRepository repository)
-        {
-            var p = typeof(PackageManager).GetProperty(nameof(LocalRepository), BindingFlags.Instance | BindingFlags.Public);
-            p.SetValue(this, repository);
+            {
+                try
+                {
+                    InstallPackage(package, TargetFramework, ignoreDependencies, allowPrereleaseVersions, DisableWalkInfo);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(MessageLevel.Warning, $"Could not install '{package.Id} {package.Version}': {ex}");
+                    throw;
+                }
+            }
         }
 
         /// <summary>
@@ -88,6 +93,12 @@ namespace NuPlug
             var skipPackages = LocalRepository as ISkipPackages;
             if (skipPackages == null) throw new InvalidOperationException("Cannot skip packages on this local repository");
             skipPackages.SkipPackages(packages);
+        }
+
+        internal void SetLocalRepository(IPackageRepository repository)
+        {
+            var p = typeof(PackageManager).GetProperty(nameof(LocalRepository), BindingFlags.Instance | BindingFlags.Public);
+            p.SetValue(this, repository);
         }
     }
 }

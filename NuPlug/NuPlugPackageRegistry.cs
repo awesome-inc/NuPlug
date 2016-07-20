@@ -12,8 +12,6 @@ namespace NuPlug
     /// </summary>
     public class NuPlugPackageRegistry : IPackageRegistry
     {
-        private static readonly string AppDir = (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).GetDirectory();
-
         private readonly IDictionary<string, IDictionary<SemanticVersion, IPackage>> _packages =
             new Dictionary<string, IDictionary<SemanticVersion, IPackage>>();
 
@@ -29,7 +27,7 @@ namespace NuPlug
                 return version == null || versions.ContainsKey(version);
             }
 
-            var libFile = Path.Combine(AppDir, $"{packageId}.dll");
+            var libFile = Path.Combine(Assemblies.HomePath, $"{packageId}.dll");
             return File.Exists(libFile);
         }
 
