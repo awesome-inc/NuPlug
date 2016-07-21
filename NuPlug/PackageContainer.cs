@@ -20,17 +20,21 @@ namespace NuPlug
     {
         private readonly AggregateCatalog _catalog = new AggregateCatalog();
         private readonly CompositionContainer _container;
-        private readonly IResolveAssembly _assemblyResolver;
         private Func<Type, bool> _typeFilter = type => IsPublicImplementationOf(type);
         private Func<string, bool> _fileFilter = fileName => fileName.EndsWith(".dll");
 
         /// <summary>
+        /// The <see cref="IResolveAssembly"/> to resolve assemblies.
+        /// </summary>
+        public IResolveAssembly AssemblyResolver { get; }
+
+        /// <summary>
         ///     Initializes a new instance of the <see cref="PackageContainer{TItem}" /> class.
         /// </summary>
-        /// <param name="assemblyResolver">A custom <see cref="IResolveAssembly"/>. If null, uses the default <see cref="AssemblyResolver"/>.</param>
+        /// <param name="assemblyResolver">A custom <see cref="IResolveAssembly"/>. If null, uses the default <see cref="NuPlug.AssemblyResolver"/>.</param>
         public PackageContainer(IResolveAssembly assemblyResolver = null)
         {
-            _assemblyResolver = assemblyResolver ?? new AssemblyResolver();
+            AssemblyResolver = assemblyResolver ?? new AssemblyResolver();
             Batch.AddPart(this);
             _container = new CompositionContainer(_catalog);
         }
@@ -108,7 +112,7 @@ namespace NuPlug
         public virtual void Dispose()
         {
             _container.Dispose();
-            _assemblyResolver.Dispose();
+            AssemblyResolver.Dispose();
         }
 
         /// <summary>
@@ -116,9 +120,9 @@ namespace NuPlug
         /// </summary>
         protected internal void AddDirectory(string libDir)
         {
-            if (_assemblyResolver.Directories.Contains(libDir))
+            if (AssemblyResolver.Directories.Contains(libDir))
                 return;
-            _assemblyResolver.Directories.Add(libDir);
+            AssemblyResolver.Directories.Add(libDir);
         }
 
         /// <summary>
@@ -126,8 +130,8 @@ namespace NuPlug
         /// </summary>
         protected internal void RemoveDirectory(string libDir)
         {
-            if (_assemblyResolver.Directories.Contains(libDir))
-                _assemblyResolver.Directories.Remove(libDir);
+            if (AssemblyResolver.Directories.Contains(libDir))
+                AssemblyResolver.Directories.Remove(libDir);
         }
 
         private static bool IsPublicImplementationOf(Type type)
@@ -139,12 +143,12 @@ namespace NuPlug
         {
             // remove obsolete
             var dirsToRemove = _catalog.Catalogs.OfType<SafeDirectoryCatalog>().Select(c => c.FullPath)
-                .Except(_assemblyResolver.Directories);
+                .Except(AssemblyResolver.Directories);
             foreach (var directory in dirsToRemove)
                 RemoveCatalogsFor(directory);
 
             // add new
-            foreach (var directory in _assemblyResolver.Directories)
+            foreach (var directory in AssemblyResolver.Directories)
                 AddCatalogFor(directory);
         }
 

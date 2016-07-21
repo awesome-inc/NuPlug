@@ -67,16 +67,22 @@ namespace NuPlug
             if (!fs.DirectoryExists(libDir))
                 return null;
 
-            if (fs.GetFiles("*.dll", libDir, false).Any())
-                return libDir;
-
+            // match framework
             var folderNames = fs.GetDirectories(libDir)
                 .Select(p => p.Split(Path.DirectorySeparatorChar).Last())
                 .ToList();
+            if (folderNames.Any())
+            {
+                var bestMatch = Framework.Version.BestMatch(folderNames);
+                if (!string.IsNullOrWhiteSpace(bestMatch))
+                    return Path.Combine(libDir, bestMatch);
+            }
 
-            var bestMatch = Framework.Version.BestMatch(folderNames);
-            if (string.IsNullOrWhiteSpace(bestMatch)) return null;
-            return Path.Combine(libDir, bestMatch);
+            // fall back to lib-dir
+            if (fs.GetFiles(libDir, "*.dll", false).Any())
+                return libDir;
+
+            return null;
         }
     }
 }
