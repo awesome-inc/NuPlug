@@ -18,6 +18,7 @@ namespace NuPlug
             using (var sut = new AssemblyResolver())
             {
                 var assembly = typeof (AssemblyResolver_Should).Assembly;
+                sut.Directories.Clear();
                 var resolvedAssembly = sut.ResolveAssembly(this, new ResolveEventArgs(assembly.GetName().Name));
                 Assert.IsNull(resolvedAssembly, "should resolve to null, because no directories to resolve from.");
             }
@@ -44,6 +45,16 @@ namespace NuPlug
                 var msgs = ttl.MessagesFor(TraceLevel.Verbose).ToArray();
                 msgs[0].Should().Be($"Requested to load '{aName.Name}' by '{requesting.FullName}'.");
                 msgs[1].Should().StartWith($"Resolved '{aName.Name}, {aName.Version}' from '{assembly.GetLocation()}");
+            }
+        }
+
+        [Test, Issue("https://github.com/awesome-inc/NuPlug/issues/11")]
+        public void Add_entry_assembly_directory_for_implicit_binding_redirect()
+        {
+            using (var sut = new AssemblyResolver())
+            {
+                var expectedDir = Assemblies.HomePath;
+                sut.Directories.Should().Contain(expectedDir);
             }
         }
     }
