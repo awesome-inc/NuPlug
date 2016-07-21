@@ -33,6 +33,7 @@ namespace NuPlug
         public AssemblyResolver(IEnumerable<string> directories = null)
         {
             Directories = (directories ?? Enumerable.Empty<string>()).ToList();
+            Directories.Insert(0, Assemblies.HomePath);
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
 #if DEBUG
             TraceAlways = true;

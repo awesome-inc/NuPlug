@@ -15,6 +15,11 @@ namespace NuPlug
         IEnumerable<TItem> Items { get; }
 
         /// <summary>
+        /// The <see cref="IResolveAssembly"/> to resolve assemblies.
+        /// </summary>
+        IResolveAssembly AssemblyResolver { get; }
+
+        /// <summary>
         /// Refresh the <see cref="Items"/> collection. Usually triggers a recomposition of the underlying IoC container (e.g. MEF).
         /// </summary>
         void Update();
