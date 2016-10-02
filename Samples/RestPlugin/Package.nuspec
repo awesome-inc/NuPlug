@@ -15,8 +15,8 @@
     <dependencies>
       <group targetFramework="net45">
 
-        <dependency id="Autofac" version="3.5.2" />
-        <dependency id="Autofac.WebApi2" version="3.4.0" />
+        <dependency id="Autofac" version="4.1.1" />
+        <dependency id="Autofac.WebApi2" version="4.0.0" />
         <dependency id="Microsoft.AspNet.Cors" version="5.2.3" />
         <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
         <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3" />
@@ -31,7 +31,7 @@
         <dependency id="Microsoft.Owin.SelfHost" version="3.0.1" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
         <dependency id="Owin" version="1.0" />
-        <dependency id="Swashbuckle.Core" version="5.3.2" />
+        <dependency id="Swashbuckle.Core" version="5.4.0" />
       </group>
     </dependencies>
   </metadata>

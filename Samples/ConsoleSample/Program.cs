@@ -75,7 +75,7 @@ namespace ConsoleSample
             var packagesConfig = new XDocument(
                 new XElement("packages",
                     new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", version))
-                    //, new XElement("package", new XAttribute("id", "NuPlug.RestPlugin"), new XAttribute("version", version)) // swagger is broken with newest Newtonsoft.Json
+                    , new XElement("package", new XAttribute("id", "NuPlug.RestPlugin"), new XAttribute("version", version))
                     ));
 
             Trace.TraceInformation($"Installing packages ({PrettySource(packageManager.SourceRepository)} --> {PrettySource(packageManager.LocalRepository)})...");
