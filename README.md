@@ -191,7 +191,7 @@ before installing.
 Some hints getting up to speed in production with NuPlug
 
 ### 1. Automate packaging
-To get up to speed you should automate as much of the manual tasks as possible and make it part of your build process. For instance, we do NuGet packaging using [OneClickBuild](https://github.com/awesome-inc/OneClickBuild)).
+To get up to speed you should automate as much of the manual tasks as possible and make it part of your build process. For instance, we do NuGet packaging using [OneClickBuild](https://github.com/awesome-inc/OneClickBuild).
 
 ### 2. Speeding up development cycles for `DEBUG`
 During hot development, short feedback cycles are king. Note that decoupling your code using plugins is cool but is likely to increase your development cycles unless you automate building and publishing the plugins within the standard Visual Studio build. To move fast, we totally skip NuGet packaging during `DEBUG` and just load the plugin assemblies from a directory. For this to work you need two things
