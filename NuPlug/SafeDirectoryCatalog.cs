@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
@@ -15,6 +16,7 @@ namespace NuPlug
 
         public string FullPath => _dirInfo.FullName;
         public override IQueryable<ComposablePartDefinition> Parts => Catalog.Parts;
+        public IList<Assembly> Assemblies { get; } = new List<Assembly>();
 
         public SafeDirectoryCatalog(string directory, 
             Func<Type,bool> typeFilter = null, 
@@ -34,10 +36,13 @@ namespace NuPlug
                 {
                     var catalog = new SafeAssemblyCatalog(file.FullName, typeFilter, reflectionContext);
 
-                    //Force MEF to load the plugin and figure out if there are any exports
+                    //Force MEF to load the plugin and figure out if there are any exports.
                     // good assemblies will not throw the RTLE exception and can be added to the catalog
-                    if (catalog.Parts.ToList().Count > 0)
-                        Catalog.Catalogs.Add(catalog);
+                    if (catalog.Parts.ToList().Count <= 0)
+                        continue;
+
+                    Catalog.Catalogs.Add(catalog);
+                    Assemblies.Add(catalog.Assembly);
                 }
                 catch (Exception ex) when (ex is ReflectionTypeLoadException || ex is BadImageFormatException)
                 {

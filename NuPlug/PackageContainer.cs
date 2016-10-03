@@ -22,6 +22,7 @@ namespace NuPlug
         private readonly CompositionContainer _container;
         private Func<Type, bool> _typeFilter = type => IsPublicImplementationOf(type);
         private Func<string, bool> _fileFilter = fileName => fileName.EndsWith(".dll");
+        private readonly List<string> _assemblyFiles = new List<string>();
 
         /// <summary>
         /// The <see cref="IResolveAssembly"/> to resolve assemblies.
@@ -156,8 +157,16 @@ namespace NuPlug
         {
             if (CatalogsMatching(libDir).Any())
                 return;
-            var catalog = new SafeDirectoryCatalog(libDir, TypeFilter, Conventions, FileFilter);
+            var catalog = new SafeDirectoryCatalog(libDir, TypeFilter, Conventions, ConsiderFile);
+            if (!catalog.Parts.Any()) return;
             _catalog.Catalogs.Add(catalog);
+            _assemblyFiles.AddRange(catalog.Assemblies.Select(a => a.GetLocation()));
+        }
+
+        private bool ConsiderFile(string fileName)
+        {
+            return !_assemblyFiles.Exists(f => f.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+                && FileFilter(fileName);
         }
 
         private void RemoveCatalogsFor(string directory)
