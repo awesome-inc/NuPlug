@@ -29,7 +29,7 @@ First, install [NuPlug](https://github.com/awesome-inc/NuPlug) to your applicati
 
 Then in the startup part, create a package manager. Here is an example snippet from the `ConsoleSample` application:
 
-  var repo = PackageRepositories.For(
+    var repo = PackageRepositories.For(
       @"\\server\path\nuget\feed",  // some share for your own packages
       "https://nuget.org/api/v2/"); // fallback to NuGet gallery for other dependencies
       
@@ -47,7 +47,7 @@ Next, you need to specify which plugin packages to load. The most common way is 
 			new XElement("package", new XAttribute("id", "NuPlug.SamplePlugin"), new XAttribute("version", version))
 		));
 
-As an alternative, you can use xml files or string for the configuration.
+As an alternative, you can use xml files or a simple string for the configuration.
 
     const string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
     <packages>
