@@ -1,34 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <ItemGroup>
-     <Compile Include="$(SolutionDir)SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		 <Compile Include="$(SolutionDir)SolutionInfo.cs">
+			<Link>Properties\SolutionInfo.cs</Link>
+		</Compile>
+	</ItemGroup>
 
-  <!-- ## Using NUnit 3 -->
-  <PropertyGroup>
-    <UseNUnit3>true</UseNUnit3>
-    <NUnitResultFormat>nunit3</NUnitResultFormat>
-  </PropertyGroup>
-  
+	<!-- ## Using NUnit 3 -->
+	<PropertyGroup>
+		<UseNUnit3>true</UseNUnit3>
+		<NUnitResultFormat>nunit3</NUnitResultFormat>
+	</PropertyGroup>
+	
 	<!-- ## Allowing local deployment (non build server) -->
 	<PropertyGroup>
 		<DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
 	</PropertyGroup>
-  
+	
 	<!--## Specifying your repository token for coveralls.io -->
 	<PropertyGroup>
 		<CoverAllsToken>8OlxmeiJND5EIWIcAMzlnSdPGVTknTZBB</CoverAllsToken>
 	</PropertyGroup>
 
-  <!-- ## Automatically import sample/plugin targets -->
-  <Import Project="$(SolutionDir)\Samples\Sample.targets"
-     Condition="$(ProjectDir.Contains('\Samples\')) And '$(NCrunch)' != '1'"/>
-  
-  <!-- ## Automatically import project-specific overrides (place this last) -->
-  <Import Project="$(ProjectDir)\$(ProjectName).targets"
-     Condition="Exists('$(ProjectDir)\$(ProjectName).targets') And '$(NCrunch)' != '1'"/>
+	<!-- ## Automatically import sample/plugin targets -->
+	<Import Project="$(SolutionDir)\Samples\Sample.targets"
+		 Condition="$(ProjectDir.Contains('\Samples\')) And '$(NCrunch)' != '1'"/>
+	
+	<!-- ## Automatically import project-specific overrides (place this last) -->
+	<Import Project="$(ProjectDir)\$(ProjectName).targets"
+		 Condition="Exists('$(ProjectDir)\$(ProjectName).targets') And '$(NCrunch)' != '1'"/>
 
 </Project>
